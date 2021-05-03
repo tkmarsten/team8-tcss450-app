@@ -28,6 +28,9 @@ app.use('/hello', require('./routes/hello.js'))
 app.use('/params', require('./routes/params.js'))
 app.use('/demosql', require('./routes/demosql.js'))
 app.use('/phish', middleware.checkToken, require('./routes/phish.js'))
+app.use('/messages', middleware.checkToken, require('./routes/messages.js'))
+app.use('/chats', middleware.checkToken, require('./routes/chats.js'))
+app.use('/auth', middleware.checkToken, require('./routes/pushyregister.js'))
 
 /*
  * Return HTML for the / end point. 
