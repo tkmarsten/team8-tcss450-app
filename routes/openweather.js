@@ -2,10 +2,12 @@ const OPEN_WEATHER_API_KEY = process.env.OPEN_WEATHER_API_KEY
 
 const express = require('express')
 
-const request = require('request');
+const request = require('request')
 
 const validation = require('../utilities').validation
 let isStringProvided = validation.isStringProvided
+
+//var XMLHttpRequest = require("xmlhttprequest").XMLHttpRequest;
 
 const router = express.Router();
 
@@ -16,16 +18,19 @@ router.get("/", (req, res, next) => {
     } else {
         res.status(400).json({message: "Missing Authorization For OpenWeather API"})
     }
-}, (request, response) => {
-    if (isStringProvided(request.headers.zipcode)) {
-        const unit = "standard"
-        const zipcode = request.headers.zipcode
+}, (req, res) => {
+    if (isStringProvided(req.headers.zipcode)) {
+        const unit = "standard";
+        const zipcode = req.headers.zipcode;
     
-        let url = `api.openweathermap.org/data/2.5/weather?zip=${zipcode},us&appid=${OPEN_WEATHER_API_KEY}&units=${unit}`
-    
-        var xhr = new XMLHttpRequest();
-        xhr.open("GET", url, true);
+        let url = `https://api.openweathermap.org/data/2.5/weather?zip=${zipcode},us&appid=${OPEN_WEATHER_API_KEY}&units=${unit}`;
 
+        let options = {json: true};
+ /* 
+        var xhr = new XMLHttpRequest();
+
+        xhr.open("GET", url);
+        
         xhr.setRequestHeader("Accept", "application/json");
     
         xhr.onreadystatechange = function() {
@@ -36,23 +41,22 @@ router.get("/", (req, res, next) => {
         };
 
         xhr.send();
+*/
+
+        request(url, options, (error, response, body) => {
+            if (!error && response.statusCode == 200) {
+                var info = JSON.parse(JSON.stringify(body))
+                res.send(body);
+            } else {
+                console.log(error);
+                res.send({error: url});
+            }
+        });
+
     } else {
-        response.status(400).send({
-            message: "Missing required information"
+        res.status(400).send({
+            message: "Missing required zipcode information"
         })
     }
-
 })
 module.exports = router
-
-
-    /*
-    https.get(url, (response) => {
-        response.on("data", function(data) {
-            const weatherData = JSON.parse(data);
-            console.log(weatherData);
-            const id = weatherData.weather[0].id;
-        })
-    })
-})
-    */
