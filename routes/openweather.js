@@ -7,10 +7,7 @@ const request = require('request')
 const validation = require('../utilities').validation
 let isStringProvided = validation.isStringProvided
 
-//var XMLHttpRequest = require("xmlhttprequest").XMLHttpRequest;
-
 const router = express.Router();
-
 
 router.get("/", (req, res, next) => {
     if (isStringProvided(req.headers.authorization) && req.headers.authorization.startsWith('6543c')) {
@@ -20,36 +17,18 @@ router.get("/", (req, res, next) => {
     }
 }, (req, res) => {
     if (isStringProvided(req.headers.zipcode)) {
-        const unit = "standard";
+        const unit = "imperial";
         const zipcode = req.headers.zipcode;
     
         let url = `https://api.openweathermap.org/data/2.5/weather?zip=${zipcode},us&appid=${OPEN_WEATHER_API_KEY}&units=${unit}`;
 
         let options = {json: true};
- /* 
-        var xhr = new XMLHttpRequest();
-
-        xhr.open("GET", url);
-        
-        xhr.setRequestHeader("Accept", "application/json");
-    
-        xhr.onreadystatechange = function() {
-            if (xhr.readyState == 4 && xhr.status == 200) {
-                let weatherJSON = JSON.parse(xhr.responseText);
-                response.send(weatherJSON);
-            }
-        };
-
-        xhr.send();
-*/
 
         request(url, options, (error, response, body) => {
             if (!error && response.statusCode == 200) {
-                var info = JSON.parse(JSON.stringify(body))
-                res.send(body);
+                res.send(JSON.parse(JSON.stringify(body)));
             } else {
-                console.log(error);
-                res.send({error: url});
+                res.send({error: "No Zipcode Found"});
             }
         });
 
