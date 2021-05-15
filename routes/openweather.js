@@ -48,7 +48,7 @@ router.get("/current", (req, res, next) => {
     if (isStringProvided(req.headers.authorization) && req.headers.authorization.startsWith('6543c')) {
         next()
     } else {
-        res.status(400).json({message: "Missing Authorization For OpenWeather API"})
+        res.status(400).json({message: "Missing Authorization For OpenWeatherMap API"})
     }
 }, (req, res) => {
     if (isStringProvided(req.headers.zipcode)) {
