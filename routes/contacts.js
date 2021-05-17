@@ -7,7 +7,7 @@ const pool = require('../utilities/exports').pool
 const router = express.Router()
 
 router.get("/:email?", (request, response) => {
-    let query = `SELECT * FROM Contacts WHERE MemberID_A = $1`
+    let query = `SELECT * FROM Members WHERE MemberID IN (SELECT MemberID_A FROM Contacts WHERE MemberID_A = $1)`
     let values = [request.decoded.memberid]
 
     pool.query(query, values)
