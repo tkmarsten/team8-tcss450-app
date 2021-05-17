@@ -7,13 +7,13 @@ let sendEmail = (sender, receiver, subject, message) => {
     //similar to the DATABASE_URL and PHISH_DOT_NET_KEY (later section of the lab)
 
     //fake sending an email for now. Post a message to logs. 
-    // console.log("*********************************************************")
-    // console.log('To: ' + receiver)
-    // console.log('From: ' + sender)
-    // console.log('Subject: ' + subject)
-    // console.log("_________________________________________________________")
-    // console.log(message)
-    // console.log("*********************************************************")
+    console.log("*********************************************************")
+    console.log('To: ' + receiver)
+    console.log('From: ' + sender)
+    console.log('Subject: ' + subject)
+    console.log("_________________________________________________________")
+    console.log(message)
+    console.log("*********************************************************")
     var nodemailer = require('nodemailer');
 
     var transporter = nodemailer.createTransport({

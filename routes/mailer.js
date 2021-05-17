@@ -14,7 +14,6 @@ const sendEmail = require('../utilities').sendEmail
  * @apiSuccess {String} message Hello World message
  */
 router.get("/mailer", (request, response) => {
-    sendEmail("","","","");
     response.send({
         message: "Hello, you sent a GET request"
     })
@@ -28,9 +27,9 @@ router.get("/mailer", (request, response) => {
  * @apiSuccess {String} message Hello World message
  */
 router.post("/mailer", (request, response) => {
-    sendEmail("","","","");
+    //sendEmail("TacomaHuskyTester@gmail.com ","perezm68@uw.edu","Test Email","Successfully sent email.");
     response.send({
-        message: "Hello, you sent a POST request"
+        message: "test email sent."
     })
 })
 
