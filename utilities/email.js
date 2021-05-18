@@ -6,7 +6,7 @@ let sendEmail = (sender, receiver, subject, message) => {
     //make sure you add the password to the environmental variables
     //similar to the DATABASE_URL and PHISH_DOT_NET_KEY (later section of the lab)
 
-    //fake sending an email for now. Post a message to logs. 
+    //Echo message information to log for debugging. Post a message to logs. 
     console.log("*********************************************************")
     console.log('To: ' + receiver)
     console.log('From: ' + sender)
@@ -19,16 +19,16 @@ let sendEmail = (sender, receiver, subject, message) => {
     var transporter = nodemailer.createTransport({
     service: 'gmail',
         auth: {
-            user: 'TacomaHuskyTester@gmail.com',
-            pass: 'Testtest1!'
+            user: process.env.SENDER_EMAIL,
+            pass: process.env.SENDER_PW
         }
     });
 
     var mailOptions = {
-        from: 'TacomaHuskyTester@gmail.com',
-        to: 'perezm68@uw.edu',  // TODO change to users email
-        subject: 'Sending Email using Node.js',
-        text: 'That was easy!'
+        from: process.env.SENDER_EMAIL,
+        to: receiver,
+        subject: subject,
+        text: message
     };
 
     transporter.sendMail(mailOptions, function(error, info){
