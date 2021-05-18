@@ -7,7 +7,7 @@ const pool = require('../utilities/exports').pool
 const router = express.Router()
 
 router.get("/:email", (request, response, next) => {
-    response.memberid = null
+    response.locals.memberid = null
 
     if (!request.params.email) {
         response.status(400).send({
@@ -19,7 +19,7 @@ router.get("/:email", (request, response, next) => {
 
         pool.query(query, values)
             .then(result => {
-                response.memberid = result
+                response.locals.memberid = result.rows[0].memberid
                 next()
             }).catch(err => {
                 response.status(400).send({
@@ -30,7 +30,7 @@ router.get("/:email", (request, response, next) => {
     }
 }, (request, response) => {
     let query = `SELECT Members.FirstName, Members.LastName, Members.Nickname, Members.Email FROM Members WHERE MemberID IN (SELECT MemberID_B FROM Contacts WHERE MemberID_A = $1)`
-    let values = [response.memberid]
+    let values = [response.locals.memberid]
 
     pool.query(query, values)
         .then(result => {
