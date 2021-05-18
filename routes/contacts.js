@@ -15,8 +15,8 @@ router.get("/:email", (request, response, next) => {
         next();
     }
 }, (request, response) => {
-    let query = `SELECT Members.FirstName, Members.LastName, Members.Nickname, Members.Email FROM Members WHERE MemberID IN (SELECT MemberID_A FROM Contacts WHERE MemberID_A = 8)`
-    let values = [request.decoded.memberid]
+    let query = `SELECT Members.FirstName, Members.LastName, Members.Nickname, Members.Email FROM Members WHERE MemberID IN (SELECT MemberID_A FROM Contacts WHERE MemberID_A = $1)`
+    let values = [8]
 
     pool.query(query, values)
         .then(result => {
