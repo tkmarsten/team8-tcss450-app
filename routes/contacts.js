@@ -6,9 +6,31 @@ const pool = require('../utilities/exports').pool
 
 const router = express.Router()
 
-router.get("/", (request, response) => {
+router.get("/:email", (request, response, next) => {
+    response.memberid = null
+
+    if (!request.params.email) {
+        response.status(400).send({
+            message: "Missing required information"
+        })
+    } else {
+        let query = `SELECT Members.MemberID FROM Members WHERE Email = $1`
+        let values = [request.params.email]
+
+        pool.query(query, values)
+            .then(result => {
+                response.memberid = result
+                next()
+            }).catch(err => {
+                response.status(400).send({
+                    message: "SQL Error",
+                    error: err
+                })
+            })
+    }
+}, (request, response) => {
     let query = `SELECT Members.FirstName, Members.LastName, Members.Nickname, Members.Email FROM Members WHERE MemberID IN (SELECT MemberID_B FROM Contacts WHERE MemberID_A = $1)`
-    let values = [8]
+    let values = [response.memberid]
 
     pool.query(query, values)
         .then(result => {
