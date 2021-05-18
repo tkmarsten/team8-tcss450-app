@@ -78,7 +78,7 @@ router.post('/', (request, response) => {
                     success: true,
                     email: result.rows[0].email
                 })
-                sendEmail("our.email@lab.com", email, "Welcome to our App!", "Please verify your Email account.")
+                sendEmail(process.env.SENDER_EMAIL, email, "Welcome to our App!", "Please verify your Email account. This email will be expanded on as verification is finalized.")
             })
             .catch((error) => {
                 //log the error
