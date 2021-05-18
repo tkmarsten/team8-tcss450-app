@@ -12,7 +12,8 @@ router.post("/", (request, response) => {
     response.send({
         message: "Attempting eMail..."
     })
-    sendEmail(process.env.SENDER_EMAIL, "perezm68@uw.edu", "Email Sender Is Working!", "Email Successfully Sent.")
+    sendEmail(process.env.SENDER_EMAIL, "TacomaHuskyTester@gmail.com",
+        "Email Sender Is Working!", "Email Successfully Sent.")
 })
 
 // "return" the router
