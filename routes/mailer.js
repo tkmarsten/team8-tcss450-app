@@ -1,36 +1,22 @@
 //express is the framework we're going to use to handle requests
 const express = require('express')
 
+const sendEmail = require('../utilities').sendEmail
+
 //retrieve the router object from express
 var router = express.Router()
 
-const sendEmail = require('../utilities').sendEmail
-
-/**
- * @api {get} /hello Request a Hello World message
- * @apiName GetHello
- * @apiGroup Hello
- *
- * @apiSuccess {String} message Hello World message
- */
-router.get("/mailer", (request, response) => {
+router.get("/", (request, response) => {
     response.send({
         message: "Hello, you sent a GET request"
     })
 })
 
-/**
- * @api {post} /hello Request a Hello World message
- * @apiName PostHello
- * @apiGroup Hello
- * 
- * @apiSuccess {String} message Hello World message
- */
-router.post("/mailer", (request, response) => {
-    //sendEmail("TacomaHuskyTester@gmail.com ","perezm68@uw.edu","Test Email","Successfully sent email.");
+router.post("/", (request, response) => {
     response.send({
-        message: "test email sent."
+        message: "Attempting eMail..."
     })
+    sendEmail(process.env.SENDER_EMAIL, "perezm68@uw.edu", "Email Sender Is Working!", "Email Successfully Sent.")
 })
 
 // "return" the router
