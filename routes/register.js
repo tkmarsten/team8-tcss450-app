@@ -54,6 +54,7 @@ router.post('/', (request, response) => {
     const nickname = request.body.nickname
     const email = request.body.email
     const password = request.body.password
+    const link = "https://team8-tcss450-app.herokuapp.com/verify";  // TODO make into single use JWT token
     //Verify that the caller supplied all the parameters
     //In js, empty strings or null values evaluate to false
     if (isStringProvided(first)
@@ -78,7 +79,8 @@ router.post('/', (request, response) => {
                     success: true,
                     email: result.rows[0].email
                 })
-                sendEmail(process.env.SENDER_EMAIL, email, "Welcome to our App!", "Please verify your Email account. This email will be expanded on as verification is finalized.")
+                sendEmail(process.env.SENDER_EMAIL, email, "Welcome to our App!", "Please verify your Email account by following the link below./n/n"
+                        + link)
             })
             .catch((error) => {
                 //log the error

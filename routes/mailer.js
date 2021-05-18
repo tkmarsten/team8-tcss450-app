@@ -1,3 +1,5 @@
+// Mailer only used for debug and has no function in the application. It can be removed or commented out at a later date.
+
 //express is the framework we're going to use to handle requests
 const express = require('express')
 
@@ -5,12 +7,6 @@ const sendEmail = require('../utilities').sendEmail
 
 //retrieve the router object from express
 var router = express.Router()
-
-router.get("/", (request, response) => {
-    response.send({
-        message: "Hello, you sent a GET request"
-    })
-})
 
 router.post("/", (request, response) => {
     response.send({
