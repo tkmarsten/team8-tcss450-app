@@ -18,7 +18,7 @@ router.post('/', (request, response, next) => {
         next()
     }
 }, (request, response, next) => {
-    let query = `SELECT Members.MemberID From Members WHERE Email = $1`
+    let query = `SELECT Members.MemberID FROM Members WHERE Email = $1`
     let values = [request.body.email]
 
     pool.query(query, values)
@@ -32,7 +32,7 @@ router.post('/', (request, response, next) => {
             })
         })
 }, (request, response) => {
-    let query = `INSERT INTO CONTACTS (MemberID_A, MemberID_B) VALUES ($1, $2)`
+    let query = `INSERT INTO Contacts (MemberID_A, MemberID_B) VALUES ($1, $2)`
     let values = [response.locals.memberid, response.locals.contactMemberid]
 
     pool.query(query, values)
@@ -79,6 +79,49 @@ router.get("/:email", (request, response, next) => {
         .then(result => {
             response.send({
                 contacts: result.rows
+            })
+        }).catch(err => {
+            response.status(400).send({
+                message: "SQL Error",
+                error: err
+            })
+        })
+})
+
+router.delete('/', (request, response, next) => {
+    response.locals.memberid = request.decoded.memberid
+    response.locals.contactMemberid = null
+
+    if (!request.body.email) {
+        response.status(400).send({
+            message: "Missing required information"
+        })
+    } else {
+        next()
+    }
+}, (request, response, next) => {
+    let query = `SELECT Members.MemberID FROM Members WHERE Email = $1`
+    let values = [request.body.email]
+
+    pool.query(query, values)
+        .then(result => {
+            response.locals.contactMemberid = result.rows[0].memberid
+            next()
+        }).catch(err => {
+            response.status(400).send({
+                message: "SQL Error",
+                error: err
+            })
+        })
+}, (request, response) => {
+    let query = `DELETE FROM Contacts WHERE (MemberID_A = $1 AND MemberID_B = $2) OR (MemberID_A = $2 AND MemberID_B = $1) RETURNING *`
+    let values = [response.locals.memberid, response.locals.contactMemberid]
+
+    pool.query(query, values)
+        .then(result => {
+            response.send(200).send({
+                success: true,
+                message: "Contact removed"
             })
         }).catch(err => {
             response.status(400).send({
