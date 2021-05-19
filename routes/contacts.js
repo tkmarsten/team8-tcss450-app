@@ -25,7 +25,7 @@ const router = express.Router()
  * @apiUse JSONError
  */
 router.post('/', (request, response, next) => {
-    response.locals.contactMemberid = null
+    response.locals.memberid = null
 
     if (!request.body.email) {
         response.status(400).send({
@@ -51,7 +51,7 @@ router.post('/', (request, response, next) => {
                     message: "User attempting to add themselves"
                 })
             } else {
-                response.locals.contactMemberid = result.rows[0].memberid
+                response.locals.memberid = result.rows[0].memberid
                 next()
             }
         }).catch(error => {
@@ -65,7 +65,7 @@ router.post('/', (request, response, next) => {
                  FROM Contacts
                  WHERE (MemberID_A = $1 AND MemberID_B = $2)
                  OR (MemberID_B = $1 AND MemberID_A = $2)`
-    let values = [request.decoded.memberid, response.locals.contactMemberid]
+    let values = [request.decoded.memberid, response.locals.memberid]
 
     pool.query(query, values)
         .then(result => {
@@ -86,7 +86,7 @@ router.post('/', (request, response, next) => {
     let query = `INSERT INTO Contacts (MemberID_A, MemberID_B) 
                  VALUES ($1, $2)
                  RETURNING *`
-    let values = [request.decoded.memberid, response.locals.contactMemberid]
+    let values = [request.decoded.memberid, response.locals.memberid]
 
     pool.query(query, values)
         .then(result => {
@@ -175,10 +175,24 @@ router.get("/:email", (request, response, next) => {
         })
 })
 
-
+/**
+ * @api {delete} /contacts Remove user's selected contact
+ * @apiName DeleteContacts
+ * @apiGroup Contacts
+ * 
+ * @apiHeader {String} authorization Valid JSON Web Token JWT
+ * @apiParam {String} email the contact's email.
+ * 
+ * @apiSuccess (Success 200) {boolean} success true when the contact is deleted
+ * 
+ * @apiError (400: Missing body) {String} message "Missing required information"
+ * @apiError (400: SQL Error) {String} message the reported SQL error details
+ * @apiError (404: Email not found) {String} message "Email not found"
+ * 
+ * @apiUse JSONError
+ */
 router.delete('/', (request, response, next) => {
-    response.locals.memberid = request.decoded.memberid
-    response.locals.contactMemberid = null
+    response.locals.memberid = null
 
     if (!request.body.email) {
         response.status(400).send({
@@ -188,13 +202,25 @@ router.delete('/', (request, response, next) => {
         next()
     }
 }, (request, response, next) => {
-    let query = `SELECT Members.MemberID FROM Members WHERE Email = $1`
+    let query = `SELECT Members.MemberID 
+                 FROM Members 
+                 WHERE Email = $1`
     let values = [request.body.email]
 
     pool.query(query, values)
         .then(result => {
-            response.locals.contactMemberid = result.rows[0].memberid
-            next()
+            if (result.rowCount == 0) {
+                response.status(404).send({
+                    message: "Email not found"
+                })
+            } else if (request.decoded.memberid == result.rows[0].memberid) {
+                response.status(400).send({
+                    message: "User attempting to delete themselves"
+                })
+            } else {
+                response.locals.memberid = result.rows[0].memberid
+                next()
+            }
         }).catch(error => {
             response.status(400).send({
                 message: "SQL Error",
@@ -202,8 +228,11 @@ router.delete('/', (request, response, next) => {
             })
         })
 }, (request, response) => {
-    let query = `DELETE FROM Contacts WHERE (MemberID_A = $1 AND MemberID_B = $2) OR (MemberID_A = $2 AND MemberID_B = $1) RETURNING *`
-    let values = [response.locals.memberid, response.locals.contactMemberid]
+    let query = `DELETE FROM Contacts 
+                 WHERE (MemberID_A = $1 AND MemberID_B = $2) 
+                 OR (MemberID_A = $2 AND MemberID_B = $1) 
+                 RETURNING *`
+    let values = [request.decoded.memberid, response.locals.memberid]
 
     pool.query(query, values)
         .then(result => {
