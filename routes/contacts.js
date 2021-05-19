@@ -117,8 +117,8 @@ router.get("/:email", (request, response, next) => {
     let query = `SELECT Members.FirstName, Members.LastName, Members.Nickname, Members.Email
                  FROM Members 
                  WHERE MemberID 
-                 IN (SELECT MemberID_B FROM Contacts WHERE MemberID_A = $1) 
-                 OR (SELECT MemberID_A FROM Contacts WHERE MemberID_B = $1)`
+                 IN (SELECT MemberID_B FROM Contacts WHERE MemberID_A = $1)
+                 UNION ALL (SELECT MemberID_A FROM Contacts WHERE MemberID_B = $1)`
     let values = [response.locals.memberid]
 
     pool.query(query, values)
