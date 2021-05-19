@@ -7,7 +7,6 @@ const pool = require('../utilities/exports').pool
 const router = express.Router()
 
 router.post('/', (request, response, next) => {
-    response.locals.memberid = request.decoded.memberid
     response.locals.contactMemberid = null
 
     if (!request.body.email) {
@@ -23,17 +22,47 @@ router.post('/', (request, response, next) => {
 
     pool.query(query, values)
         .then(result => {
-            response.locals.contactMemberid = result.rows[0].memberid
-            next()
-        }).catch(err => {
+            if (result.rowCount == 0) {
+                response.status(404).send({
+                    message: "Email not found"
+                })
+            } else {
+                response.locals.contactMemberid = result.rows[0].memberid
+                next()
+            }
+        }).catch(error => {
             response.status(400).send({
                 message: "SQL Error",
-                error: err
+                error: error
+            })
+        })
+}, (request, response, next) => {
+    let query = `SELECT MemberID_A, MemberID_B 
+                 FROM Contacts
+                 WHERE (MemberID_A = $1 AND MemberID_B = $2)
+                 OR (MemberID_B = $1 AND MemberID_A = $2)`
+    let values = [request.decoded.memberid, response.locals.contactMemberid]
+
+    pool.query(query, values)
+        .then(result => {
+            if (result.rowCount > 0) {
+                response.status(400).send({
+                    message: "User is already a contact"
+                })
+            } else {
+                next()
+            }
+        }).catch(error => {
+            response.status(400).send({
+                message: "SQL Error",
+                error: error
             })
         })
 }, (request, response) => {
-    let query = `INSERT INTO Contacts (MemberID_A, MemberID_B) VALUES ($1, $2)`
-    let values = [response.locals.memberid, response.locals.contactMemberid]
+    let query = `INSERT INTO Contacts (MemberID_A, MemberID_B) 
+                 VALUES ($1, $2)
+                 RETURNING *`
+    let values = [request.decoded.memberid, response.locals.contactMemberid]
 
     pool.query(query, values)
         .then(result => {
@@ -41,13 +70,14 @@ router.post('/', (request, response, next) => {
                 success: true,
                 message: "Contact added"
             })
-        }).catch(err => {
+        }).catch(error => {
             response.status(400).send({
                 message: "SQL Error",
-                error: err
+                error: error
             })
         })
 })
+
 
 router.get("/:email", (request, response, next) => {
     response.locals.memberid = null
@@ -64,10 +94,10 @@ router.get("/:email", (request, response, next) => {
             .then(result => {
                 response.locals.memberid = result.rows[0].memberid
                 next()
-            }).catch(err => {
+            }).catch(error => {
                 response.status(400).send({
                     message: "SQL Error",
-                    error: err
+                    error: error
                 })
             })
     }
@@ -80,10 +110,10 @@ router.get("/:email", (request, response, next) => {
             response.send({
                 contacts: result.rows
             })
-        }).catch(err => {
+        }).catch(error => {
             response.status(400).send({
                 message: "SQL Error",
-                error: err
+                error: error
             })
         })
 })
@@ -107,10 +137,10 @@ router.delete('/', (request, response, next) => {
         .then(result => {
             response.locals.contactMemberid = result.rows[0].memberid
             next()
-        }).catch(err => {
+        }).catch(error => {
             response.status(400).send({
                 message: "SQL Error",
-                error: err
+                error: error
             })
         })
 }, (request, response) => {
@@ -123,10 +153,10 @@ router.delete('/', (request, response, next) => {
                 success: true,
                 message: "Contact removed"
             })
-        }).catch(err => {
+        }).catch(error => {
             response.status(400).send({
                 message: "SQL Error",
-                error: err
+                error: error
             })
         })
 })
