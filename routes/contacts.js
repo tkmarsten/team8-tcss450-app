@@ -23,7 +23,7 @@ router.post('/', (request, response, next) => {
 
     pool.query(query, values)
         .then(result => {
-            response.locals.memberid = result.rows[0].memberid
+            response.locals.contactMemberid = result.rows[0].memberid
             next()
         }).catch(err => {
             response.status(400).send({
