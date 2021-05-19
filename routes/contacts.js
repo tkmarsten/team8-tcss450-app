@@ -17,7 +17,9 @@ router.post('/', (request, response, next) => {
         next()
     }
 }, (request, response, next) => {
-    let query = `SELECT Members.MemberID FROM Members WHERE Email = $1`
+    let query = `SELECT Members.MemberID 
+                 FROM Members 
+                 WHERE Email = $1`
     let values = [request.body.email]
 
     pool.query(query, values)
@@ -87,22 +89,36 @@ router.get("/:email", (request, response, next) => {
             message: "Missing required information"
         })
     } else {
-        let query = `SELECT Members.MemberID FROM Members WHERE Email = $1`
-        let values = [request.params.email]
+        next()
+    }
+}, (request, response, next) => {
+    let query = `SELECT Members.MemberID 
+                 FROM Members 
+                 WHERE Email = $1`
+    let values = [request.params.email]
 
-        pool.query(query, values)
-            .then(result => {
+    pool.query(query, values)
+        .then(result => {
+            if (result.rowCount == 0) {
+                response.status(404).send({
+                    message: "Email not found"
+                })
+            } else {
                 response.locals.memberid = result.rows[0].memberid
                 next()
-            }).catch(error => {
-                response.status(400).send({
-                    message: "SQL Error",
-                    error: error
-                })
+            }
+        }).catch(error => {
+            response.status(400).send({
+                message: "SQL Error",
+                error: error
             })
-    }
+        })
 }, (request, response) => {
-    let query = `SELECT Members.FirstName, Members.LastName, Members.Nickname, Members.Email FROM Members WHERE MemberID IN (SELECT MemberID_B FROM Contacts WHERE MemberID_A = $1)`
+    let query = `SELECT Members.FirstName, Members.LastName, Members.Nickname, Members.Email
+                 FROM Members 
+                 WHERE MemberID 
+                 IN (SELECT MemberID_B FROM Contacts WHERE MemberID_A = $1) 
+                 OR (SELECT MemberID_A FROM Contacts WHERE MemberID_B = $1)`
     let values = [response.locals.memberid]
 
     pool.query(query, values)
@@ -117,6 +133,7 @@ router.get("/:email", (request, response, next) => {
             })
         })
 })
+
 
 router.delete('/', (request, response, next) => {
     response.locals.memberid = request.decoded.memberid
