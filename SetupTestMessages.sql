@@ -135,7 +135,7 @@ SELECT
     'Whats up!',
     Members.MemberId
 FROM Members
-WHERE Members.Email='test3@test.com'
+WHERE Members.Email='test3@test.edu'
 RETURNING *;
 -- -------------------------------------------------------
 
