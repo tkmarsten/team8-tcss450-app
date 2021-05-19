@@ -6,6 +6,49 @@ const pool = require('../utilities/exports').pool
 
 const router = express.Router()
 
+router.post('/', (request, response, next) => {
+    response.locals.memberid = request.decoded.memberid
+    response.locals.contactMemberid = null
+
+    if (!request.body.email) {
+        response.status(400).send({
+            message: "Missing required information"
+        })
+    } else {
+        next()
+    }
+}, (request, response, next) => {
+    let query = `SELECT Members.MemberID From Members WHERE Email = $1`
+    let values = [request.body.email]
+
+    pool.query(query, values)
+        .then(result => {
+            response.locals.memberid = result.rows[0].memberid
+            next()
+        }).catch(err => {
+            response.status(400).send({
+                message: "SQL Error",
+                error: err
+            })
+        })
+}, (request, response) => {
+    let query = `INSERT INTO CONTACTS (MemberID_A, MemberID_B) VALUES ($1, $2)`
+    let values = [response.locals.memberid, response.locals.contactMemberid]
+
+    pool.query(query, values)
+        .then(result => {
+            response.send(200).send({
+                success: true,
+                message: "Contact added"
+            })
+        }).catch(err => {
+            response.status(400).send({
+                message: "SQL Error",
+                error: err
+            })
+        })
+})
+
 router.get("/:email", (request, response, next) => {
     response.locals.memberid = null
 
