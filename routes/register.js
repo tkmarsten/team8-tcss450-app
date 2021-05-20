@@ -79,8 +79,9 @@ router.post('/', (request, response) => {
                 let e2 = request.auth.email.substring(request.auth.email.indexOf("@") + 1, request.auth.email.indexOf("."))
                 let e3 = request.auth.email.substring(request.auth.email.indexOf(".") + 1, request.auth.email.length)
                 let params = "?e1=" + e1 + "&e2=" + e2 + "&e3=" + e3
-                sendEmail(process.env.SENDER_EMAIL, email, "Welcome to our App!", "Please verify your Email account by following the link below.\n\n"
+                sendEmail(process.env.SENDER_EMAIL, request.auth.email, "Welcome to our App!", "Please verify your Email account by following the link below.\n\n"
                         + link + params)
+                console.log("New Member: " + request.auth.email)
                 //We successfully added the user!
                 response.status(201).send({
                     success: true,
