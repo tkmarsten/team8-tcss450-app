@@ -32,8 +32,8 @@ router.get("/", (request, response) => {
         pool.query(theQuery, values)
             .then(result => {
                 // Inform user of new password.
-                //sendEmail(process.env.SENDER_EMAIL, email,
-                //    "New Password", "Your new password is: " + password + "\n\nIt is recomended to change this in app as soon as possible.")
+                sendEmail(process.env.SENDER_EMAIL, email,
+                    "New Password", "Your new password is: " + password + "\n\nIt is recomended to change this in app as soon as possible.")
                 
                 //Success message
                 response.status(201).send({
