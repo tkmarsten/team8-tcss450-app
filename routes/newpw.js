@@ -20,11 +20,14 @@ router.get("/", (request, response) => {
         let email = request.query.e1 + "@" + request.query.e2 + "." + request.query.e3
         
         // Send new password to user.
-        let password = generatePassword(8)
+        let password = generatePassword(8) // Default is a randomly generated password.
+        if (isStringProvided(request.body.password)){
+            password = request.body.password
+        }
 
         let salt = generateSalt(32)
         let salted_hash = generateHash(password, salt)
-            // (FirstName, LastName, Nickname, Email, Password, Salt) VALUES ($1, $2, $3, $4, $5, $6) RETURNING Email
+        
         let theQuery = "UPDATE Members SET Password = $1, Salt = $2 WHERE Email = $3"
         let values = [salted_hash, salt, email]
 
@@ -32,7 +35,7 @@ router.get("/", (request, response) => {
             .then(result => {
                 // Inform user of new password.
                 sendEmail(process.env.SENDER_EMAIL, email,
-                    "New Password", "Your new password is: " + password + "\n\nIt is recomended to change this in app as soon as possible.")
+                    "New Password", "Your new password is: " + password)
                 
                 //Success message
                 response.status(201).send({
