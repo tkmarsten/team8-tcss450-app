@@ -44,6 +44,7 @@ VALUES
     (1, 'Global Chat')
 RETURNING *;
 
+
 --Add the three test users to Global Chat
 INSERT INTO 
     ChatMembers(ChatId, MemberId)
@@ -52,7 +53,91 @@ FROM Members
 WHERE Members.Email='test1@test.com'
     OR Members.Email='test2@test.com'
     OR Members.Email='test3@test.com'
+    OR Members.Email='test@test.edu'
 RETURNING *;
+
+-- New stuff---------------------------------------------
+--Create Global Chat room, ChatId 2
+INSERT INTO
+    chats(chatid, name)
+VALUES
+    (2, 'test@test.edu and test1@test.edu chat room')
+RETURNING *;
+
+--Add the users to chat
+INSERT INTO 
+    ChatMembers(ChatId, MemberId)
+SELECT 2, Members.MemberId
+FROM Members
+WHERE Members.Email='test@test.edu'
+    OR Members.Email='test1@test.edu'
+RETURNING *;
+
+--Create Global Chat room, ChatId 3
+INSERT INTO
+    chats(chatid, name)
+VALUES
+    (3, 'test@test.edu and test2@test.edu chat room')
+RETURNING *;
+
+--Add the users to chat
+INSERT INTO 
+    ChatMembers(ChatId, MemberId)
+SELECT 3, Members.MemberId
+FROM Members
+WHERE Members.Email='test@test.edu'
+    OR Members.Email='test2@test.edu'
+RETURNING *;
+
+--Create Global Chat room, ChatId 4
+INSERT INTO
+    chats(chatid, name)
+VALUES
+    (4, 'test@test.edu and test3@test.edu chat room')
+RETURNING *;
+
+--Add the users to chat
+INSERT INTO 
+    ChatMembers(ChatId, MemberId)
+SELECT 4, Members.MemberId
+FROM Members
+WHERE Members.Email='test@test.edu'
+    OR Members.Email='test3@test.edu'
+RETURNING *;
+
+--Add Multiple messages to create a conversation
+INSERT INTO 
+    Messages(ChatId, Message, MemberId)
+SELECT 
+    2, 
+    'Hello!',
+    Members.MemberId
+FROM Members
+WHERE Members.Email='test1@test.edu'
+RETURNING *;
+
+--Add Multiple messages to create a conversation
+INSERT INTO 
+    Messages(ChatId, Message, MemberId)
+SELECT 
+    3, 
+    'Howdy!',
+    Members.MemberId
+FROM Members
+WHERE Members.Email='test2@test.edu'
+RETURNING *;
+
+--Add Multiple messages to create a conversation
+INSERT INTO 
+    Messages(ChatId, Message, MemberId)
+SELECT 
+    4, 
+    'Whats up!',
+    Members.MemberId
+FROM Members
+WHERE Members.Email='test3@test.edu'
+RETURNING *;
+-- -------------------------------------------------------
 
 --Add Multiple messages to create a conversation
 INSERT INTO 
