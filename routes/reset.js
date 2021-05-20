@@ -62,7 +62,7 @@ router.get('/', (request, response, next) => {
             let e3 = request.auth.email.substring(request.auth.email.indexOf(".") + 1, request.auth.email.length)
             let params = "?e1=" + e1 + "&e2=" + e2 + "&e3=" + e3
             // Send to log
-            console.log( "email: " + request.auth.email + " - link: " + link + params);
+            //console.log( "email: " + request.auth.email + " - link: " + link + params);
             // email link to user to reset password.
             sendEmail(process.env.SENDER_EMAIL, request.auth.email,
                 "Password Reset Request", "Follow the link below to reset your password.\n\n" + link + params)

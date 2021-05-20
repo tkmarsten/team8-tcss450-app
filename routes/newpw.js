@@ -21,7 +21,6 @@ router.get("/", (request, response) => {
         
         // Send new password to user.
         let password = generatePassword(8)
-        console.log("new password: " + password)
 
         let salt = generateSalt(32)
         let salted_hash = generateHash(password, salt)
@@ -38,7 +37,7 @@ router.get("/", (request, response) => {
                 //Success message
                 response.status(201).send({
                     success: true,
-                    message: "success"
+                    message: "success, please check your email for your new password."
                 })
             })
             .catch((error) => {
