@@ -44,7 +44,7 @@ router.get("/zipcode_to_lat_long", (req, res, next) => {
 
 // use this connection primarily to get the OpenWeatherMap API 
 // current weather conditions data via zipcode
-router.get("/current", (req, res, next) => {
+router.get("/current/openweathermap", (req, res, next) => {
     if (isStringProvided(req.headers.authorization) && req.headers.authorization.startsWith('6543c')) {
         next()
     } else {
@@ -73,6 +73,39 @@ router.get("/current", (req, res, next) => {
         })
     }
 })
+
+
+// use this connection to get the WeatherBit API containing the icon code
+// for the outlook image icon for the current weather data
+router.get("/current/weatherbit", (req, res, next) => {
+    if (isStringProvided(req.headers.authorization) && req.headers.authorization.startsWith('37cb3')) {
+        next()
+    } else {
+        res.status(400).json({message: "Missing Authorization For OpenWeatherMap API"})
+    }
+}, (req, res) => {
+    if (isStringProvided(req.headers.zipcode)) {
+        const zipcode = req.headers.zipcode;
+    
+        let url = `https://api.weatherbit.io/v2.0/current?postal_code=${zipcode}&key=${WEATHER_BIT_API_KEY}`;
+
+        let options = {json: true};
+
+        request(url, options, (error, response, body) => {
+            if (!error && response.statusCode == 200) {
+                res.send(JSON.parse(JSON.stringify(body)));
+            } else {
+                res.send({error: "No Zipcode Found"});
+            }
+        });
+
+    } else {
+        res.status(400).send({
+            message: "Missing required zipcode information"
+        })
+    }
+})
+
 
 
 // use this connection primarily to get the OpenWeatherMap API 
@@ -140,6 +173,26 @@ router.get("/daily", (req, res, next) => {
         res.status(400).send({
             message: "Missing required zipcode information"
         })
+    }
+})
+
+// use this connection to get the WeatherBit API
+// icon via icon_code obtained from a JSON object
+router.get("/icon", (req, res) =>{
+    if (isStringProvided(req.headers.icon_code)) {
+        const icon_code = req.headers.icon_code;
+
+        var requestOptions = {
+            url: `https://www.weatherbit.io/static/img/icons/${icon_code}.png`,
+            encoding: null
+        }
+
+        request(requestOptions, (error, response, body) => {
+            if (!error && response.statusCode == 200) {
+                res.set('Content-Type', 'image/png');
+                res.send(body);
+            }
+        });
     }
 })
 
