@@ -54,6 +54,7 @@ router.post('/', (request, response) => {
     const nickname = request.body.nickname
     const email = request.body.email
     const password = request.body.password
+    const link = "https://team8-tcss450-app.herokuapp.com/verify";
     //Verify that the caller supplied all the parameters
     //In js, empty strings or null values evaluate to false
     if (isStringProvided(first)
@@ -73,12 +74,19 @@ router.post('/', (request, response) => {
         let values = [first, last, nickname, email, salted_hash, salt]
         pool.query(theQuery, values)
             .then(result => {
+                // parse email into easy way to send in link TODO encode
+                let e1 = email.substring(0, email.indexOf("@"))
+                let e2 = email.substring(email.indexOf("@") + 1, email.indexOf("."))
+                let e3 = email.substring(email.indexOf(".") + 1, email.length)
+                let params = "?e1=" + e1 + "&e2=" + e2 + "&e3=" + e3
+                sendEmail(process.env.SENDER_EMAIL, email, "Welcome to our App!", "Please verify your Email account by following the link below.\n\n"
+                        + link + params)
+                console.log("New Member: " + email)
                 //We successfully added the user!
                 response.status(201).send({
                     success: true,
                     email: result.rows[0].email
                 })
-                sendEmail("our.email@lab.com", email, "Welcome to our App!", "Please verify your Email account.")
             })
             .catch((error) => {
                 //log the error

@@ -24,14 +24,16 @@ let isStringProvided = validation.isStringProvided
 
 app.use('/auth', require('./routes/signin.js'))
 app.use('/auth', require('./routes/register.js'))
-app.use('/hello', require('./routes/hello.js'))
-app.use('/params', require('./routes/params.js'))
-app.use('/demosql', require('./routes/demosql.js'))
+app.use('/mailer', require('./routes/mailer.js'))
+app.use('/verify', require('./routes/verify.js'))
+app.use('/reset', require('./routes/reset.js'))
+app.use('/newpw', require('./routes/newpw.js'))
 app.use('/phish', middleware.checkToken, require('./routes/phish.js'))
 app.use('/messages', middleware.checkToken, require('./routes/messages.js'))
 app.use('/chats', middleware.checkToken, require('./routes/chats.js'))
 app.use('/auth', middleware.checkToken, require('./routes/pushyregister.js'))
 app.use('/weather', require('./routes/openweather.js'))
+app.use('/contacts', middleware.checkToken, require('./routes/contacts'))
 
 /*
  * Return HTML for the / end point. 
