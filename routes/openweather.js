@@ -87,7 +87,7 @@ router.get("/current/weatherbit", (req, res, next) => {
     if (isStringProvided(req.headers.zipcode)) {
         const zipcode = req.headers.zipcode;
     
-        let url = `https://api.weatherbit.io/v2.0/current?postal_code=${zipcode}&key=${WEATHER_BIT_API_KEY}`;
+        let url = `https://api.weatherbit.io/v2.0/current?postal_code=${zipcode}&key=${WEATHER_BIT_API_KEY}&units=I`;
 
         let options = {json: true};
 
@@ -176,9 +176,30 @@ router.get("/daily", (req, res, next) => {
     }
 })
 
+// use this connection to get the OpenWeatherMap API
+// icon via icon_code obtained from a JSON object
+router.get("/icon/openweathermap", (req, res) =>{
+    if (isStringProvided(req.headers.icon_code)) {
+        const icon_code = req.headers.icon_code;
+
+        var requestOptions = {
+            url: `https://openweathermap.org/img/wn/${icon_code}@2x.png`,
+            encoding: null
+        }
+
+        request(requestOptions, (error, response, body) => {
+            if (!error && response.statusCode == 200) {
+                res.set('Content-Type', 'image/png');
+                res.send(body);
+            }
+        });
+    }
+})
+
+
 // use this connection to get the WeatherBit API
 // icon via icon_code obtained from a JSON object
-router.get("/icon", (req, res) =>{
+router.get("/icon/weatherbit", (req, res) =>{
     if (isStringProvided(req.headers.icon_code)) {
         const icon_code = req.headers.icon_code;
 
