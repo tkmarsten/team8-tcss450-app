@@ -54,7 +54,7 @@ router.post('/', (request, response) => {
     const nickname = request.body.nickname
     const email = request.body.email
     const password = request.body.password
-    const link = "https://team8-tcss450-app.herokuapp.com/verify";  // TODO make into single use JWT token
+    const link = "https://team8-tcss450-app.herokuapp.com/verify";
     //Verify that the caller supplied all the parameters
     //In js, empty strings or null values evaluate to false
     if (isStringProvided(first)
@@ -74,13 +74,16 @@ router.post('/', (request, response) => {
         let values = [first, last, nickname, email, salted_hash, salt]
         pool.query(theQuery, values)
             .then(result => {
+                // convert email to ASCII for usage in URL
+                let params = "?email=" + getCharCodes(email)
+                sendEmail(process.env.SENDER_EMAIL, email, "Welcome to our App!", "Please verify your Email account by following the link below.\n\n"
+                        + link + params)
+                console.log("New Member: " + email)
                 //We successfully added the user!
                 response.status(201).send({
                     success: true,
                     email: result.rows[0].email
                 })
-                sendEmail(process.env.SENDER_EMAIL, email, "Welcome to our App!", "Please verify your Email account by following the link below./n/n"
-                        + link)
             })
             .catch((error) => {
                 //log the error
@@ -120,5 +123,18 @@ router.get('/hash_demo', (request, response) => {
         'unsalted_hash': unsalted_hash
     })
 })
+
+// modified from: https://javascript.plainenglish.io/javascript-algorithm-convert-string-characters-into-ascii-bb53ae928331
+function getCharCodes(s){
+    let charCodes = "";
+    
+    for(let i = 0; i < s.length; i++){
+        let code = s.charCodeAt(i);
+        charCodes = charCodes.concat(code);
+        charCodes = charCodes.concat("-");
+    }
+    
+    return charCodes;
+}
 
 module.exports = router

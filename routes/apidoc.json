@@ -5,11 +5,10 @@
     "title": "Lab API Doc",
     "url" : "https://tiarnanm-tcss450-labs.herokuapp.com",
     "order": [
-      "Hello",
-      "Params",
-      "Wait",
-      "DemoSql",
       "Auth",
+      "Contacts",
+      "Chats",
+      "Messages",
       "Phish"
     ]
   }

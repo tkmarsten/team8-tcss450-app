@@ -8,8 +8,6 @@ const pool = require('../utilities').pool
 const validation = require('../utilities').validation
 let isStringProvided = validation.isStringProvided
 
-const generateHash = require('../utilities').generateHash
-
 const sendEmail = require('../utilities').sendEmail
 
 //retrieve the router object from express
@@ -20,9 +18,10 @@ const jwt = require('jsonwebtoken')
 const config = {
     secret: process.env.JSON_WEB_TOKEN
 }
-const link = "https://team8-tcss450-app.herokuapp.com/reset"
+const link = "https://team8-tcss450-app.herokuapp.com/newpw/"
 
 router.get('/', (request, response, next) => {
+    // Send Email
     if (isStringProvided(request.headers.authorization) && request.headers.authorization.startsWith('Basic ')) {
         next()
     } else {
@@ -57,13 +56,22 @@ router.get('/', (request, response, next) => {
                 })
                 return
             }
-
+            // parse email into easy way to send in link TODO encode
+            // let e1 = request.auth.email.substring(0, request.auth.email.indexOf("@"))
+            // let e2 = request.auth.email.substring(request.auth.email.indexOf("@") + 1, request.auth.email.indexOf("."))
+            // let e3 = request.auth.email.substring(request.auth.email.indexOf(".") + 1, request.auth.email.length)
+            // let params = "?e1=" + e1 + "&e2=" + e2 + "&e3=" + e3
+            let params = "?email=" + getCharCodes(request.auth.email)
+            // Send to log
+            //console.log( "email: " + request.auth.email + " - link: " + link + params);
+            // email link to user to reset password.
             sendEmail(process.env.SENDER_EMAIL, request.auth.email,
-                "Password Reset Request", "Follow the link below to reset your password.\n\n" + link)
-                response.json({
-                    success: true,
-                    message: 'Reset request successfully sent to email!'
-                })
+                "Password Reset Request", "Follow the link below to reset your password.\n\n" + link + params)
+            
+            response.json({
+                success: true,
+                message: 'Reset request successfully sent to email!'
+            })
                 
         })
         .catch((err) => {
@@ -75,12 +83,18 @@ router.get('/', (request, response, next) => {
         })
 })
 
-router.post("/", (request, response) => {
-    response.send({
-        message: "Nothin' to see here, bub."
-        // TODO reset password for user here.
-    })
-})
+// modified from: https://javascript.plainenglish.io/javascript-algorithm-convert-string-characters-into-ascii-bb53ae928331
+function getCharCodes(s){
+    let charCodes = "";
+    
+    for(let i = 0; i < s.length; i++){
+        let code = s.charCodeAt(i);
+        charCodes = charCodes.concat(code);
+        charCodes = charCodes.concat("-");
+    }
+    
+    return charCodes;
+}
 
 // "return" the router
 module.exports = router
