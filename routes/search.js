@@ -59,3 +59,5 @@ router.get("/:email", (request, response, next) => {
             })
         })
 })
+
+module.exports = router
