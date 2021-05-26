@@ -74,11 +74,8 @@ router.post('/', (request, response) => {
         let values = [first, last, nickname, email, salted_hash, salt]
         pool.query(theQuery, values)
             .then(result => {
-                // parse email into easy way to send in link TODO encode
-                let e1 = email.substring(0, email.indexOf("@"))
-                let e2 = email.substring(email.indexOf("@") + 1, email.indexOf("."))
-                let e3 = email.substring(email.indexOf(".") + 1, email.length)
-                let params = "?e1=" + e1 + "&e2=" + e2 + "&e3=" + e3
+                // convert email to ASCII for usage in URL
+                let params = "?email=" + getCharCodes(email)
                 sendEmail(process.env.SENDER_EMAIL, email, "Welcome to our App!", "Please verify your Email account by following the link below.\n\n"
                         + link + params)
                 console.log("New Member: " + email)
@@ -126,5 +123,18 @@ router.get('/hash_demo', (request, response) => {
         'unsalted_hash': unsalted_hash
     })
 })
+
+// modified from: https://javascript.plainenglish.io/javascript-algorithm-convert-string-characters-into-ascii-bb53ae928331
+function getCharCodes(s){
+    let charCodes = "";
+    
+    for(let i = 0; i < s.length; i++){
+        let code = s.charCodeAt(i);
+        charCodes = charCodes.concat(code);
+        charCodes = charCodes.concat("-");
+    }
+    
+    return charCodes;
+}
 
 module.exports = router

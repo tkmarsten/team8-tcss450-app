@@ -13,11 +13,13 @@ const sendEmail = require('../utilities').sendEmail
 var router = express.Router()
 
 router.get("/", (request, response) => {
-    if (isStringProvided(request.query.e1)
-        && isStringProvided(request.query.e2)
-        && isStringProvided(request.query.e3)) {
+    // if (isStringProvided(request.query.e1)
+    //     && isStringProvided(request.query.e2)
+    //     && isStringProvided(request.query.e3)) {
+        if (isStringProvided(request.query.email)){
         // Reconstitute email address from link parameters TODO decode
-        let email = request.query.e1 + "@" + request.query.e2 + "." + request.query.e3
+        //let email = request.query.e1 + "@" + request.query.e2 + "." + request.query.e3
+        let email = getStringFromCodes(request.query.email)
         
         let theQuery = "UPDATE Members SET Verification = 1 WHERE Email = $1"
         let values = [email]
@@ -43,6 +45,33 @@ router.get("/", (request, response) => {
         })
     }
 })
+
+// router.post("/", (request, response) => {
+//     let test = "test"
+//     console.log("start: " + test)
+//     console.log("codes: " + getCharCodes(test))
+//     console.log("decoded: " + getStringFromCodes(getCharCodes(test)))
+
+//     response.status(400).send({
+//         message: test + "=>" + getCharCodes(test) + "=>" + getStringFromCodes(getCharCodes(test))
+//     })
+// })
+
+function getStringFromCodes(c){
+    let decodedString = "";
+    let tempChar = "";
+    
+    for(let i = 0; i < c.length; i++){
+        if (c.charAt(i) == "-"){
+            decodedString = decodedString.concat(String.fromCharCode(parseInt(tempChar)))
+            tempChar = ""
+        } else {
+            tempChar = tempChar.concat(c.charAt(i))
+        }
+    }
+    
+    return decodedString;
+}
 
 // "return" the router
 module.exports = router

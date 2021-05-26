@@ -15,11 +15,13 @@ const sendEmail = require('../utilities').sendEmail
 router.get("/", (request, response) => {
     const passwordIn = request.body.password
 
-    if (isStringProvided(request.query.e1)
-        && isStringProvided(request.query.e2)
-        && isStringProvided(request.query.e3)) {
+    // if (isStringProvided(request.query.e1)
+    //     && isStringProvided(request.query.e2)
+    //     && isStringProvided(request.query.e3)) {
+        if (isStringProvided(request.query.email)) {
         // Reconstitute email address from link parameters TODO decode
-        let email = request.query.e1 + "@" + request.query.e2 + "." + request.query.e3
+        //let email = request.query.e1 + "@" + request.query.e2 + "." + request.query.e3
+        let email = getStringFromCodes(request.query.email)
         
         // Send new password to user.
         let password = generatePassword(8) // Default is a randomly generated password.
@@ -62,18 +64,18 @@ router.get("/", (request, response) => {
 })
 
 router.post("/", (request, response) => {
-    const passwordIn = request.body.password
-
-    if (isStringProvided(request.query.e1)
-        && isStringProvided(request.query.e2)
-        && isStringProvided(request.query.e3)) {
-        // Reconstitute email address from link parameters TODO decode
-        let email = request.query.e1 + "@" + request.query.e2 + "." + request.query.e3
+    // if (isStringProvided(request.query.e1)
+    //     && isStringProvided(request.query.e2)
+    //     && isStringProvided(request.query.e3)) {
+    //     // Reconstitute email address from link parameters TODO decode
+    //     let email = request.query.e1 + "@" + request.query.e2 + "." + request.query.e3
+    if (isStringProvided(request.body.email)) {
+        let email = request.body.email
         
         // Send new password to user.
         let password = generatePassword(8) // Default is a randomly generated password.
-        if (isStringProvided(passwordIn)){
-            password = passwordIn
+        if (isStringProvided(request.body.password)){
+            password = request.body.password
         }
 
         let salt = generateSalt(32)
@@ -121,6 +123,22 @@ router.post("/", (request, response) => {
         retVal += charset.charAt(Math.floor(Math.random() * n));
     }
     return retVal;
+}
+
+function getStringFromCodes(c){
+    let decodedString = "";
+    let tempChar = "";
+    
+    for(let i = 0; i < c.length; i++){
+        if (c.charAt(i) == "-"){
+            decodedString = decodedString.concat(String.fromCharCode(parseInt(tempChar)))
+            tempChar = ""
+        } else {
+            tempChar = tempChar.concat(c.charAt(i))
+        }
+    }
+    
+    return decodedString;
 }
 
 module.exports = router
