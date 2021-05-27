@@ -46,11 +46,14 @@ router.get("/:email", (request, response, next) => {
                 response.status(404).send({
                     message: "Email not found"
                 })
+            } else if (request.params.email == result.rows[0].email) {
+                response.status(400).send({
+                    message: "User is searching themselves"
+                })
             } else {
                 response.send({
                     contact: result.rows
                 })
-                next()
             }
         }).catch(error => {
             response.status(400).send({
