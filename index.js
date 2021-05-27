@@ -22,8 +22,8 @@ app.use(middleware.jsonErrorInBody)
 const validation = require('./utilities').validation
 let isStringProvided = validation.isStringProvided
 
-app.use('/auth', require('./routes/auth/signin.js'))
-app.use('/auth', require('./routes/auth/register.js'))
+app.use('/auth', require('./routes/auth/signin'))
+app.use('/auth', require('./routes/auth/register'))
 app.use('/mailer', require('./routes/mailer.js'))
 app.use('/verify', require('./routes/auth/verify.js'))
 app.use('/reset', require('./routes/auth/password/reset.js'))
