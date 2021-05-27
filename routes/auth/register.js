@@ -2,15 +2,15 @@
 const express = require('express')
 
 //Access the connection to Heroku Database
-const pool = require('../utilities').pool
+const pool = require('../../utilities').pool
 
-const validation = require('../utilities').validation
+const validation = require('../../utilities').validation
 let isStringProvided = validation.isStringProvided
 
-const generateHash = require('../utilities').generateHash
-const generateSalt = require('../utilities').generateSalt
+const generateHash = require('../../utilities').generateHash
+const generateSalt = require('../../utilities').generateSalt
 
-const sendEmail = require('../utilities').sendEmail
+const sendEmail = require('../../utilities').sendEmail
 
 const router = express.Router()
 
@@ -77,7 +77,7 @@ router.post('/', (request, response) => {
                 // convert email to ASCII for usage in URL
                 let params = "?email=" + getCharCodes(email)
                 sendEmail(process.env.SENDER_EMAIL, email, "Welcome to our App!", "Please verify your Email account by following the link below.\n\n"
-                        + link + params)
+                    + link + params)
                 console.log("New Member: " + email)
                 //We successfully added the user!
                 response.status(201).send({
@@ -125,15 +125,15 @@ router.get('/hash_demo', (request, response) => {
 })
 
 // modified from: https://javascript.plainenglish.io/javascript-algorithm-convert-string-characters-into-ascii-bb53ae928331
-function getCharCodes(s){
+function getCharCodes(s) {
     let charCodes = "";
-    
-    for(let i = 0; i < s.length; i++){
+
+    for (let i = 0; i < s.length; i++) {
         let code = s.charCodeAt(i);
         charCodes = charCodes.concat(code);
         charCodes = charCodes.concat("-");
     }
-    
+
     return charCodes;
 }
 

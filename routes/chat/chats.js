@@ -2,11 +2,11 @@
 const express = require('express')
 
 //Access the connection to Heroku Database
-const pool = require('../utilities/exports').pool
+const pool = require('../../utilities/exports').pool
 
 const router = express.Router()
 
-const validation = require('../utilities').validation
+const validation = require('../../utilities').validation
 let isStringProvided = validation.isStringProvided
 
 
@@ -51,14 +51,14 @@ let isStringProvided = validation.isStringProvided
  * 
  * @apiUse JSONError
  */
- router.post("/", (request, response, next) => {
-     //Retrieve data from query params
+router.post("/", (request, response, next) => {
+    //Retrieve data from query params
     const chatName = request.body.name
     const userEmail = request.body.userEmail
     const connectionEmail = request.body.connectionEmail
 
 
-    if (!isStringProvided(chatName) 
+    if (!isStringProvided(chatName)
         || !isStringProvided(userEmail)
         || !isStringProvided(connectionEmail)) {
 
@@ -70,7 +70,7 @@ let isStringProvided = validation.isStringProvided
     }
 }, (request, response, next) => {
     //get the memberID from the emails
-    
+
     //first memberID
     let insert = `SELECT MemberID FROM Members WHERE Email=$1`
 
@@ -151,13 +151,13 @@ let isStringProvided = validation.isStringProvided
             } else {
                 // connectionMemberId = result.rows[0].memberid
                 // next()
-             
+
                 response.send({
                     successAlreadyExisted: true,
                     successNewChatRoom: false,
                     rowCount: result.rowCount, //SHOULD NORMALLY BE 1
                     rows: result.rows //INTEGERS IN A LIST representing mutual chatIDs
-                    
+
                 })
             }
 
@@ -412,7 +412,7 @@ router.get("/:chatId", (request, response, next) => {
             response.send({
                 rowCount: result.rowCount,
                 rows: result.rows
-                
+
             })
         }).catch(err => {
             response.status(400).send({
@@ -519,7 +519,7 @@ router.delete("/:chatId/:email", (request, response, next) => {
                 error: error
             })
         })
-//SELECT ChatID FROM ChatMembers WHERE 
+    //SELECT ChatID FROM ChatMembers WHERE 
 }, (request, response) => {
     //Delete the memberId from the chat
     let insert = `DELETE FROM ChatMembers

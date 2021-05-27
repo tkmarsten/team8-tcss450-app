@@ -3,12 +3,12 @@
 const express = require('express')
 
 //Access the connection to Heroku Database
-const pool = require('../utilities').pool
+const pool = require('../../../utilities').pool
 
-const validation = require('../utilities').validation
+const validation = require('../../../utilities').validation
 let isStringProvided = validation.isStringProvided
 
-const sendEmail = require('../utilities').sendEmail
+const sendEmail = require('../../../utilities').sendEmail
 
 //retrieve the router object from express
 var router = express.Router()
@@ -67,12 +67,12 @@ router.get('/', (request, response, next) => {
             // email link to user to reset password.
             sendEmail(process.env.SENDER_EMAIL, request.auth.email,
                 "Password Reset Request", "Follow the link below to reset your password.\n\n" + link + params)
-            
+
             response.json({
                 success: true,
                 message: 'Reset request successfully sent to email!'
             })
-                
+
         })
         .catch((err) => {
             //log the error
@@ -84,15 +84,15 @@ router.get('/', (request, response, next) => {
 })
 
 // modified from: https://javascript.plainenglish.io/javascript-algorithm-convert-string-characters-into-ascii-bb53ae928331
-function getCharCodes(s){
+function getCharCodes(s) {
     let charCodes = "";
-    
-    for(let i = 0; i < s.length; i++){
+
+    for (let i = 0; i < s.length; i++) {
         let code = s.charCodeAt(i);
         charCodes = charCodes.concat(code);
         charCodes = charCodes.concat("-");
     }
-    
+
     return charCodes;
 }
 

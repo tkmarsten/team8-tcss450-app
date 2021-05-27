@@ -2,7 +2,7 @@
 const express = require('express')
 
 //Access the connection to Heroku Database
-const pool = require('../utilities/exports').pool
+const pool = require('../../utilities/exports').pool
 
 const router = express.Router()
 

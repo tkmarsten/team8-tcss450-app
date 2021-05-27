@@ -2,12 +2,12 @@
 const express = require('express')
 
 //Access the connection to Heroku Database
-const pool = require('../utilities').pool
+const pool = require('../../utilities').pool
 
-const validation = require('../utilities').validation
+const validation = require('../../utilities').validation
 let isStringProvided = validation.isStringProvided
 
-const generateHash = require('../utilities').generateHash
+const generateHash = require('../../utilities').generateHash
 
 const router = express.Router()
 
