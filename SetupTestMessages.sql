@@ -41,7 +41,7 @@ VALUES
 INSERT INTO
     chats(chatid, name)
 VALUES
-    (1, 'Global Chat')
+    (1, 'test2@test.edu and test3@test.edu private chat room')
 RETURNING *;
 
 
@@ -75,21 +75,21 @@ WHERE Members.Email='test1@test.edu'
     OR Members.Email='test2@test.edu'
 RETURNING *;
 
--- --Create Global Chat room, ChatId 3
--- INSERT INTO
---     chats(chatid, name)
--- VALUES
---     (3, 'test1@test.edu and test3@test.edu chat room')
--- RETURNING *;
+--Create Global Chat room, ChatId 3
+INSERT INTO
+    chats(chatid, name)
+VALUES
+    (3, 'test1@test.edu and test3@test.edu chat room')
+RETURNING *;
 
--- --Add the users to chat
--- INSERT INTO 
---     ChatMembers(ChatId, MemberId)
--- SELECT 3, Members.MemberId
--- FROM Members
--- WHERE Members.Email='test1@test.edu'
---     OR Members.Email='test3@test.edu'
--- RETURNING *;
+--Add the users to chat
+INSERT INTO 
+    ChatMembers(ChatId, MemberId)
+SELECT 3, Members.MemberId
+FROM Members
+WHERE Members.Email='test1@test.edu'
+    OR Members.Email='test3@test.edu'
+RETURNING *;
 
 -- --Create Global Chat room, ChatId 4
 -- INSERT INTO
@@ -115,7 +115,7 @@ SELECT
     'Hello!',
     Members.MemberId
 FROM Members
-WHERE Members.Email='test1@test.edu'
+WHERE Members.Email='test2@test.edu'
 RETURNING *;
 
 --Add Multiple messages to create a conversation
@@ -129,16 +129,16 @@ FROM Members
 WHERE Members.Email='test2@test.edu'
 RETURNING *;
 
---Add Multiple messages to create a conversation
-INSERT INTO 
-    Messages(ChatId, Message, MemberId)
-SELECT 
-    4, 
-    'Whats up!',
-    Members.MemberId
-FROM Members
-WHERE Members.Email='test3@test.edu'
-RETURNING *;
+-- --Add Multiple messages to create a conversation
+-- INSERT INTO 
+--     Messages(ChatId, Message, MemberId)
+-- SELECT 
+--     4, 
+--     'Whats up!',
+--     Members.MemberId
+-- FROM Members
+-- WHERE Members.Email='test3@test.edu'
+-- RETURNING *;
 -- -------------------------------------------------------
 
 --Add Multiple messages to create a conversation
@@ -149,7 +149,7 @@ SELECT
     'Hello Everyone!',
     Members.MemberId
 FROM Members
-WHERE Members.Email='test1@test.edu'
+WHERE Members.Email='test3@test.edu'
 RETURNING *;
 
 INSERT INTO 
@@ -179,7 +179,7 @@ SELECT
     'Great, thanks for asking t3',
     Members.MemberId
 FROM Members
-WHERE Members.Email='test1@test.edu'
+WHERE Members.Email='test2@test.edu'
 RETURNING *;
 
 INSERT INTO 
@@ -189,7 +189,7 @@ SELECT
     'Enough with the pleasantries',
     Members.MemberId
 FROM Members
-WHERE Members.Email='test2@test.edu'
+WHERE Members.Email='test3@test.edu'
 RETURNING *;
 
 INSERT INTO 
@@ -219,7 +219,7 @@ SELECT
     'OK ok. T2, what did you do since the last meeting?',
     Members.MemberId
 FROM Members
-WHERE Members.Email='test1@test.edu'
+WHERE Members.Email='test2@test.edu'
 RETURNING *;
 
 INSERT INTO 
@@ -229,7 +229,7 @@ SELECT
     'Nothing.',
     Members.MemberId
 FROM Members
-WHERE Members.Email='test2@test.edu'
+WHERE Members.Email='test3@test.edu'
 RETURNING *;
 
 INSERT INTO 
@@ -249,7 +249,7 @@ SELECT
     'Get your act together and finish the messaging end points',
     Members.MemberId
 FROM Members
-WHERE Members.Email='test2@test.edu'
+WHERE Members.Email='test3@test.edu'
 RETURNING *;
 
 INSERT INTO 
@@ -259,7 +259,7 @@ SELECT
     'Woah now. Im waiting on t1...',
     Members.MemberId
 FROM Members
-WHERE Members.Email='test3@test.edu'
+WHERE Members.Email='test2@test.edu'
 RETURNING *;
 
 INSERT INTO 
@@ -269,7 +269,7 @@ SELECT
     'I had a mid-term. :-(',
     Members.MemberId
 FROM Members
-WHERE Members.Email='test1@test.edu'
+WHERE Members.Email='test3@test.edu'
 RETURNING *;
 
 
@@ -280,7 +280,7 @@ SELECT
     'But lets keep this cordial please',
     Members.MemberId
 FROM Members
-WHERE Members.Email='test1@test.edu'
+WHERE Members.Email='test2@test.edu'
 RETURNING *;
 
 INSERT INTO 
@@ -290,7 +290,7 @@ SELECT
     'So, t2, t3 is blocking you',
     Members.MemberId
 FROM Members
-WHERE Members.Email='test1@test.edu'
+WHERE Members.Email='test3@test.edu'
 RETURNING *;
 
 INSERT INTO 
@@ -300,7 +300,7 @@ SELECT
     '...and Im blocking t3',
     Members.MemberId
 FROM Members
-WHERE Members.Email='test1@test.edu'
+WHERE Members.Email='test2@test.edu'
 RETURNING *;
 
 INSERT INTO 
@@ -310,7 +310,7 @@ SELECT
     'sounds like you get another day off.',
     Members.MemberId
 FROM Members
-WHERE Members.Email='test1@test.edu'
+WHERE Members.Email='test3@test.edu'
 RETURNING *;
 
 INSERT INTO 
@@ -340,7 +340,7 @@ SELECT
     'Ok ok. No. Charles wont be happy with that.',
     Members.MemberId
 FROM Members
-WHERE Members.Email='test1@test.edu'
+WHERE Members.Email='test3@test.edu'
 RETURNING *;
 
 INSERT INTO 
@@ -350,7 +350,7 @@ SELECT
     'My exam is over now. Ill get cracking on this thing',
     Members.MemberId
 FROM Members
-WHERE Members.Email='test1@test.edu'
+WHERE Members.Email='test2@test.edu'
 RETURNING *;
 
 INSERT INTO 
@@ -360,7 +360,7 @@ SELECT
     'I can knoock it out tonight',
     Members.MemberId
 FROM Members
-WHERE Members.Email='test1@test.edu'
+WHERE Members.Email='test3@test.edu'
 RETURNING *;
 
 INSERT INTO 
@@ -370,7 +370,7 @@ SELECT
     'If I get it by tmorrow AM',
     Members.MemberId
 FROM Members
-WHERE Members.Email='test3@test.edu'
+WHERE Members.Email='test2@test.edu'
 RETURNING *;
 
 INSERT INTO 
@@ -390,7 +390,7 @@ SELECT
     'aftershock',
     Members.MemberId
 FROM Members
-WHERE Members.Email='test3@test.edu'
+WHERE Members.Email='test2@test.edu'
 RETURNING *;
 
 INSERT INTO 
@@ -410,7 +410,7 @@ SELECT
     'Sounds like a plan',
     Members.MemberId
 FROM Members
-WHERE Members.Email='test2@test.edu'
+WHERE Members.Email='test3@test.edu'
 RETURNING *;
 
 INSERT INTO 
@@ -430,7 +430,7 @@ SELECT
     'lets dooooooo it',
     Members.MemberId
 FROM Members
-WHERE Members.Email='test1@test.edu'
+WHERE Members.Email='test2@test.edu'
 RETURNING *;
 
 INSERT INTO 
