@@ -45,6 +45,8 @@ let isStringProvided = validation.isStringProvided
  * 
  * @apiError (400: Missing Parameters) {String} message "Missing required information"
  * 
+ * @apiError (400: chatID Error) {String} message "Error assigning chatID"
+ * 
  * @apiError (400: SQL Error) {String} message the reported SQL error details
  * 
  * @apiError (400: Unknown Chat ID) {String} message "invalid chat id"
@@ -131,6 +133,7 @@ let isStringProvided = validation.isStringProvided
                 let insert = `INSERT INTO Chats(Name)
                   VALUES ($1)
                   RETURNING ChatId`
+                var chatID;
                 let values = [request.body.name]
                 pool.query(insert, values)
                     .then(result => {
@@ -139,7 +142,9 @@ let isStringProvided = validation.isStringProvided
                             successNewChatRoom: true,
                             rowCount: 1,
                             rows: [result.rows[0].chatid]
+                            
                         })
+                        chatID = result.rows[0].chatid
                     }).catch(err => {
                         response.status(400).send({
                             message: "SQL Error",
@@ -147,6 +152,43 @@ let isStringProvided = validation.isStringProvided
                         })
 
                     })
+                    
+                if (!(chatID == null)) {
+                    //add the user to the chat
+                    let insert = `INSERT INTO ChatMembers(ChatId, MemberId) VALUES ($1, $2) RETURNING *`
+                    let values = [chatID, request.body.userEmail]
+                    pool.query(insert, values)
+                        .then(result => {
+                            response.send({
+                                success: true
+                            })
+                        }).catch(err => {
+                            response.status(400).send({
+                                message: "SQL Error",
+                                error: err
+                            })
+                        })
+
+                    //add connection to the chat
+                    let insert = `INSERT INTO ChatMembers(ChatId, MemberId) VALUES ($1, $2) RETURNING *`
+                    let values = [chatID, request.body.connectionEmail]
+                    pool.query(insert, values)
+                        .then(result => {
+                            response.send({
+                                success: true
+                            })
+                        }).catch(err => {
+                            response.status(400).send({
+                                message: "SQL Error",
+                                error: err
+                            })
+                        })
+
+                } else {
+                    response.status(400).send({
+                        message: "Error assigning chatID"
+                        })
+                }
                 //---------------------------------------------------------
             } else {
                 // connectionMemberId = result.rows[0].memberid
