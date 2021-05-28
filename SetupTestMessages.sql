@@ -50,9 +50,12 @@ INSERT INTO
     ChatMembers(ChatId, MemberId)
 SELECT 1, Members.MemberId
 FROM Members
-WHERE Members.Email='test1@test.edu'
-    OR Members.Email='test2@test.edu'
+WHERE Members.Email='test2@test.edu'
     OR Members.Email='test3@test.edu'
+
+    -- WHERE Members.Email='test1@test.edu'
+    -- OR Members.Email='test2@test.edu'
+    -- OR Members.Email='test3@test.edu'
 RETURNING *;
 
 -- New stuff---------------------------------------------
