@@ -153,43 +153,43 @@ router.post("/", (request, response, next) => {
 
                     })
                     
-                if (!(chatID == null)) {
-                    //add the user to the chat
-                    let insert = `INSERT INTO ChatMembers(ChatId, MemberId) VALUES ($1, $2) RETURNING *`
-                    let values = [chatID, request.body.userEmail]
-                    pool.query(insert, values)
-                        .then(result => {
-                            response.send({
-                                success: true
-                            })
-                        }).catch(err => {
-                            response.status(400).send({
-                                message: "SQL Error",
-                                error: err
-                            })
-                        })
+                // if (!(chatID == null)) {
+                //     //add the user to the chat
+                //     let insert = `INSERT INTO ChatMembers(ChatId, MemberId) VALUES ($1, $2) RETURNING *`
+                //     let values = [chatID, request.body.userEmail]
+                //     pool.query(insert, values)
+                //         .then(result => {
+                //             response.send({
+                //                 success: true
+                //             })
+                //         }).catch(err => {
+                //             response.status(400).send({
+                //                 message: "SQL Error",
+                //                 error: err
+                //             })
+                //         })
 
-                    //add connection to the chat
-                    let insert = `INSERT INTO ChatMembers(ChatId, MemberId) VALUES ($1, $2) RETURNING *`
-                    let values = [chatID, request.body.connectionEmail]
-                    pool.query(insert, values)
-                        .then(result => {
-                            response.send({
-                                success: true
-                            })
-                        }).catch(err => {
-                            response.status(400).send({
-                                message: "SQL Error",
-                                error: err
-                            })
-                        })
+                //     //add connection to the chat
+                //     let insert = `INSERT INTO ChatMembers(ChatId, MemberId) VALUES ($1, $2) RETURNING *`
+                //     let values = [chatID, request.body.connectionEmail]
+                //     pool.query(insert, values)
+                //         .then(result => {
+                //             response.send({
+                //                 success: true
+                //             })
+                //         }).catch(err => {
+                //             response.status(400).send({
+                //                 message: "SQL Error",
+                //                 error: err
+                //             })
+                //         })
 
-                } else {
-                    response.status(400).send({
-                        message: "Error assigning chatID"
-                        })
-                }
-                //---------------------------------------------------------
+                // } else {
+                //     response.status(400).send({
+                //         message: "Error assigning chatID"
+                //         })
+                // }
+                // //---------------------------------------------------------
             } else {
                 // connectionMemberId = result.rows[0].memberid
                 // next()
