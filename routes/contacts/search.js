@@ -2,7 +2,7 @@
 const express = require('express')
 
 //Access the connection to Heroku Database
-const pool = require('../utilities/exports').pool
+const pool = require('../../utilities/exports').pool
 
 const router = express.Router()
 
@@ -46,11 +46,14 @@ router.get("/:email", (request, response, next) => {
                 response.status(404).send({
                     message: "Email not found"
                 })
+            } else if (request.decoded.memberid == result.rows[0].memberid) {
+                response.status(400).send({
+                    message: "User is searching themselves"
+                })
             } else {
                 response.send({
                     contact: result.rows
                 })
-                next()
             }
         }).catch(error => {
             response.status(400).send({

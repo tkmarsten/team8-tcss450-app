@@ -2,11 +2,11 @@
 const express = require('express')
 
 //Access the connection to Heroku Database
-const pool = require('../utilities/exports').pool
+const pool = require('../../utilities/exports').pool
 
 const router = express.Router()
 
-const middleware = require('../middleware')
+const middleware = require('../../middleware')
 
 /**
  * @api {put} /auth Request to insert a Pushy Token for the user
