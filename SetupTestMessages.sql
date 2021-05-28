@@ -75,37 +75,37 @@ WHERE Members.Email='test1@test.edu'
     OR Members.Email='test2@test.edu'
 RETURNING *;
 
---Create Global Chat room, ChatId 3
-INSERT INTO
-    chats(chatid, name)
-VALUES
-    (3, 'test1@test.edu and test3@test.edu chat room')
-RETURNING *;
+-- --Create Global Chat room, ChatId 3
+-- INSERT INTO
+--     chats(chatid, name)
+-- VALUES
+--     (3, 'test1@test.edu and test3@test.edu chat room')
+-- RETURNING *;
 
---Add the users to chat
-INSERT INTO 
-    ChatMembers(ChatId, MemberId)
-SELECT 3, Members.MemberId
-FROM Members
-WHERE Members.Email='test1@test.edu'
-    OR Members.Email='test3@test.edu'
-RETURNING *;
+-- --Add the users to chat
+-- INSERT INTO 
+--     ChatMembers(ChatId, MemberId)
+-- SELECT 3, Members.MemberId
+-- FROM Members
+-- WHERE Members.Email='test1@test.edu'
+--     OR Members.Email='test3@test.edu'
+-- RETURNING *;
 
---Create Global Chat room, ChatId 4
-INSERT INTO
-    chats(chatid, name)
-VALUES
-    (4, 'test2@test.edu and test3@test.edu chat room')
-RETURNING *;
+-- --Create Global Chat room, ChatId 4
+-- INSERT INTO
+--     chats(chatid, name)
+-- VALUES
+--     (4, 'test2@test.edu and test3@test.edu chat room')
+-- RETURNING *;
 
---Add the users to chat
-INSERT INTO 
-    ChatMembers(ChatId, MemberId)
-SELECT 4, Members.MemberId
-FROM Members
-WHERE Members.Email='test2@test.edu'
-    OR Members.Email='test3@test.edu'
-RETURNING *;
+-- --Add the users to chat
+-- INSERT INTO 
+--     ChatMembers(ChatId, MemberId)
+-- SELECT 4, Members.MemberId
+-- FROM Members
+-- WHERE Members.Email='test2@test.edu'
+--     OR Members.Email='test3@test.edu'
+-- RETURNING *;
 
 --Add Multiple messages to create a conversation
 INSERT INTO 
