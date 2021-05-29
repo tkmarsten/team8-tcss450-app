@@ -577,6 +577,78 @@ router.get("/:chatId", (request, response, next) => {
 });
 
 /**
+ * @api {get} /chats/:email Request to get the all chatID's connected to a given email.
+ * @apiName GetChatIDs
+ * @apiGroup Chats
+ * 
+ * @apiHeader {String} authorization Valid JSON Web Token JWT
+ * 
+ * @apiParam {String} the user's email
+ * 
+ * @apiSuccess {Number} rowCount the number of chatID's returned
+ * @apiSuccess {Object[]} chatID List
+ * @apiSuccess {Number} ChatMembers.chatID the chat ID.
+ * 
+ * @apiError (404: ChatId Not Found) {String} message "Email not found"
+ * @apiError (400: Missing Parameters) {String} message "Missing required information"
+ * 
+ * @apiError (400: SQL Error) {String} message the reported SQL error details
+ * 
+ * @apiUse JSONError
+ */
+ router.get("/:email", (request, response, next) => {
+    //validate on missing or invalid (type) parameters
+    response.locals.memberid = null
+    if (!request.params.email) {
+        response.status(400).send({
+            message: "Missing required information"
+        })
+    } else {
+        next()
+    }
+}, (request, response, next) => {
+    //validate member ID exists
+    let query = `SELECT Members.MemberID 
+                 FROM Members 
+                 WHERE Email = $1`
+    let values = [request.params.email]
+
+    pool.query(query, values)
+        .then(result => {
+            if (result.rowCount == 0) {
+                response.status(404).send({
+                    message: "Email not found"
+                })
+            } else {
+                response.locals.memberid = result.rows[0].memberid
+                next()
+            }
+        }).catch(error => {
+            response.status(400).send({
+                message: "SQL Error",
+                error: error
+            })
+        })
+}, (request, response) => {
+    //Retrieve the chat IDs
+    let query = `SELECT ChatMembers.ChatID FROM ChatMembers WHERE MemberID=$1`
+    let values = [response.locals.memberid]
+    pool.query(query, values)
+        .then(result => {
+            response.send({
+                rowCount: result.rowCount,
+                rows: result.rows
+
+            })
+        }).catch(err => {
+            response.status(400).send({
+                message: "SQL Error",
+                error: err
+            })
+        })
+});
+
+/**
  * @api {delete} /chats/:chatId?/:email? Request delete a user from a chat
  * @apiName DeleteChats
  * @apiGroup Chats
