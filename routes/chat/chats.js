@@ -577,7 +577,7 @@ router.get("/:chatId", (request, response, next) => {
 });
 
 /**
- * @api {get} /chats/:email Request to get the all chatID's connected to a given email.
+ * @api {get} /chats/chatIDs/:email Request to get the all chatID's connected to a given email.
  * @apiName GetChatIDs
  * @apiGroup Chats
  * 
@@ -596,7 +596,7 @@ router.get("/:chatId", (request, response, next) => {
  * 
  * @apiUse JSONError
  */
- router.get("/:email", (request, response, next) => {
+ router.get("/chatIDs/:email", (request, response, next) => {
     //validate on missing or invalid (type) parameters
     response.locals.memberid = null
     if (!request.params.email) {
