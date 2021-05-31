@@ -31,8 +31,8 @@ function sendMessageToIndividual(token, message) {
 function sendContactRequestToIndividual(token, email, id) {
     const data = {
         "type": "contactRequest",
-        email,
-        memberid: id
+        "email" : email,
+        "memberid": id
     }
 
     // Send push notification via the Send Notifications API 
