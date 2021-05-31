@@ -13,17 +13,16 @@ const router = express.Router();
 // use this connection primarily to validate the queried zipcode and,
 // if zipcode is valid get the latitude and longitude coordinates for it
 router.get("/validate_zipcode", (req, res, next) => {
-    if (isStringProvided(req.headers.authorization) && req.headers.authorization.startsWith('37cb3')) {
+    if (isStringProvided(req.headers.authorization) && req.headers.authorization.startsWith('6543c')) {
         next()
     } else {
-        res.status(400).json({message: "Missing Authorization For WeatherBit API"})
+        res.status(400).json({message: "Missing Authorization For OpenWeatherMap API"})
     }
 }, (req, res) => {
     if (isStringProvided(req.headers.zipcode)) {
         const zipcode = req.headers.zipcode;
 
-        let url = `https://api.weatherbit.io/v2.0/current?` + 
-                        `postal_code=${zipcode}&key=${WEATHER_BIT_API_KEY}`;
+        let url = `https://api.openweathermap.org/data/2.5/weather?zip=${zipcode}&appid=${OPEN_WEATHER_API_KEY}`;
 
         let options = {json: true};
 
@@ -31,12 +30,42 @@ router.get("/validate_zipcode", (req, res, next) => {
             if (!error && response.statusCode == 200) {
                 res.send(JSON.parse(JSON.stringify(body)));
             } else {
-                res.send({error: "No Valid Lat/Long Coordinates Found"});
+                res.send({error: "No Valid Zipcode Found"});
             }
         });
     } else {
         res.status(400).send({
             message: "Missing Zipcode information"
+        })
+    }
+})
+
+// use this connection primarily to validate the queried latitude/longitude coordinates
+router.get("/validate_lat_lon", (req, res, next) => {
+    if (isStringProvided(req.headers.authorization) && req.headers.authorization.startsWith('6543c')) {
+        next()
+    } else {
+        res.status(400).json({message: "Missing Authorization For OpenWeatherMap API"})
+    }
+}, (req, res) => {
+    if (isStringProvided(req.headers.latitude) && isStringProvided(req.headers.longitude)) {
+        const latitude = req.headers.latitude
+        const longitude = req.headers.longitude
+
+        let url = `https://api.openweathermap.org/data/2.5/weather?lat=${latitude}&lon=${longitude}&appid=${OPEN_WEATHER_API_KEY}`;
+
+        let options = {json: true};
+
+        request(url, options, (error, response, body) => {
+            if (!error && response.statusCode == 200) {
+                res.send(JSON.parse(JSON.stringify(body)));
+            } else {
+                res.send({error: "No Valid Latitude/Longitude Found"});
+            }
+        });
+    } else {
+        res.status(400).send({
+            message: "Missing Latitude/Longitude information"
         })
     }
 })
