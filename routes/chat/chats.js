@@ -512,6 +512,7 @@ router.post("/", (request, response, next) => {
  * @apiSuccess {Number} rowCount the number of messages returned
  * @apiSuccess {Object[]} members List of members in the chat
  * @apiSuccess {String} messages.nickname The nickname for the member in the chat
+ * @apiSuccess {String} messages.email The email for the member in the chat
  * 
  * @apiError (404: ChatId Not Found) {String} message "Chat ID Not Found"
  * @apiError (400: Invalid Parameter) {String} message "Malformed parameter. chatId must be a number" 
@@ -556,7 +557,7 @@ router.get("/:chatId", (request, response, next) => {
         })
 }, (request, response) => {
     //Retrieve the members
-    let query = `SELECT Members.Nickname 
+    let query = `SELECT Members.Nickname, Members.Email 
                     FROM ChatMembers
                     INNER JOIN Members ON ChatMembers.MemberId=Members.MemberId
                     WHERE ChatId=$1`
