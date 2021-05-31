@@ -7,7 +7,7 @@ const pushyAPI = new Pushy(process.env.PUSHY_API_KEY);
 function sendMessageToIndividual(token, message) {
 
     //build the message for Pushy to send
-    var data = {
+    const data = {
         "type": "msg",
         "message": message,
         "chatid": message.chatid
@@ -28,7 +28,27 @@ function sendMessageToIndividual(token, message) {
 }
 
 //add other "sendTypeToIndividual" functions here. Don't forget to export them
+function sendContactRequestToIndividual(token, email, id) {
+    const data = {
+        "type": "contactRequest",
+        email,
+        memberid: id
+    }
+
+    // Send push notification via the Send Notifications API 
+    // https://pushy.me/docs/api/send-notifications 
+    pushyAPI.sendPushNotification(data, token, {}, function (err, id) {
+        // Log errors to console 
+        if (err) {
+            return console.log('Fatal Error', err);
+        }
+
+        // Log success 
+        console.log('Push sent successfully! (ID: ' + id + ')')
+    })
+}
 
 module.exports = {
-    sendMessageToIndividual
+    sendMessageToIndividual,
+    sendContactRequestToIndividual
 }

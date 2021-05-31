@@ -30,6 +30,7 @@ CREATE TABLE ChatMembers (
     FOREIGN KEY(MemberID) REFERENCES Members(MemberID),
     FOREIGN KEY(ChatID) REFERENCES Chats(ChatID)
 );
+
 DROP TABLE IF EXISTS Messages;
 CREATE TABLE Messages (
     PrimaryKey SERIAL PRIMARY KEY,
@@ -49,12 +50,6 @@ CREATE TABLE Locations (
     Long DECIMAL,
     ZIP INT,
     FOREIGN KEY(MemberID) REFERENCES Members(MemberID)
-);
-DROP TABLE IF EXISTS Demo;
-CREATE TABLE Demo (
-    DemoID SERIAL PRIMARY KEY,
-    Name VARCHAR(255) NOT NULL UNIQUE,
-    Message VARCHAR(255)
 );
 DROP TABLE IF EXISTS Push_Token;
 CREATE TABLE Push_Token (

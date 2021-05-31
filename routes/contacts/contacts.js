@@ -2,7 +2,7 @@
 const express = require('express')
 
 //Access the connection to Heroku Database
-const pool = require('../utilities/exports').pool
+const pool = require('../../utilities/exports').pool
 
 const router = express.Router()
 
@@ -191,10 +191,10 @@ router.get("/:email", (request, response, next) => {
  * 
  * @apiUse JSONError
  */
-router.delete('/', (request, response, next) => {
+router.delete('/:email', (request, response, next) => {
     response.locals.memberid = null
 
-    if (!request.body.email) {
+    if (!request.params.email) {
         response.status(400).send({
             message: "Missing required information"
         })
@@ -205,7 +205,7 @@ router.delete('/', (request, response, next) => {
     let query = `SELECT Members.MemberID 
                  FROM Members 
                  WHERE Email = $1`
-    let values = [request.body.email]
+    let values = [request.params.email]
 
     pool.query(query, values)
         .then(result => {
