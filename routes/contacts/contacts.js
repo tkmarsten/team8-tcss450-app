@@ -6,6 +6,8 @@ const pool = require('../../utilities/exports').pool
 
 const router = express.Router()
 
+const msg_functions = require('../../utilities/exports').messaging
+
 
 /**
  * @api {post} /contacts Add another user to your contacts
@@ -82,7 +84,7 @@ router.post('/', (request, response, next) => {
                 error: error
             })
         })
-}, (request, response) => {
+}, (request, response, next) => {
     let query = `INSERT INTO Contacts (MemberID_A, MemberID_B) 
                  VALUES ($1, $2)
                  RETURNING *`
@@ -90,13 +92,31 @@ router.post('/', (request, response, next) => {
 
     pool.query(query, values)
         .then(result => {
-            response.send(200).send({
+            next();
+        }).catch(error => {
+            response.status(400).send({
+                message: "SQL Error",
+                error: error
+            })
+        })
+}, (request, response) => {
+    let query = `SELECT Token 
+                 FROM Push_Token 
+                 WHERE memberid = $1`
+    let values = [response.locals.memberid]
+
+    pool.query(query, values)
+        .then(result => {
+            msg_functions.sendContactRequestToIndividual(
+                result.rows[0].token, request.body.email, response.locals.memberid)
+            // response
+            response.status(200).send({
                 success: true,
                 message: "Contact added"
             })
         }).catch(error => {
-            response.status(400).send({
-                message: "SQL Error",
+            response.status(200).send({
+                message: "Contact added, Unable to send notification to user.",
                 error: error
             })
         })
