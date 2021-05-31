@@ -35,7 +35,7 @@ router.get("/:email", (request, response, next) => {
         next()
     }
 }, (request, response) => {
-    let query = `SELECT Members.FirstName, Members.LastName, Members.Nickname, Members.Email 
+    let query = `SELECT Members.Email 
                  FROM Members 
                  WHERE Email = $1`
     let values = [request.params.email]
@@ -51,8 +51,9 @@ router.get("/:email", (request, response, next) => {
                     message: "User is searching themselves"
                 })
             } else {
-                response.send({
-                    contact: result.rows
+                response.status(200).send({
+                    success: true,
+                    message: "User found"
                 })
             }
         }).catch(error => {
