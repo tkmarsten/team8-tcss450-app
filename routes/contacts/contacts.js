@@ -29,7 +29,7 @@ const msg_functions = require('../../utilities/exports').messaging
 router.post('/', (request, response, next) => {
     response.locals.memberid = null
 
-    if (!request.body.email) {
+    if ((!request.body.email) || (!request.body.sender)) {
         response.status(400).send({
             message: "Missing required information"
         })
@@ -108,7 +108,7 @@ router.post('/', (request, response, next) => {
     pool.query(query, values)
         .then(result => {
             msg_functions.sendContactRequestToIndividual(
-                result.rows[0].token, request.body.email, response.locals.memberid)
+                result.rows[0].token, request.body.sender, response.locals.memberid)
             // response
             response.status(200).send({
                 success: true,
