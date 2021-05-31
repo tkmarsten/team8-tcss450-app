@@ -10,9 +10,9 @@ let isStringProvided = validation.isStringProvided
 
 const router = express.Router();
 
-// use this connection primarily to get the latitude and
-// longitude coordinates from a queried zipcode in the WeatherBit API
-router.get("/zipcode_to_lat_long", (req, res, next) => {
+// use this connection primarily to validate the queried zipcode and,
+// if zipcode is valid get the latitude and longitude coordinates for it
+router.get("/validate_zipcode", (req, res, next) => {
     if (isStringProvided(req.headers.authorization) && req.headers.authorization.startsWith('37cb3')) {
         next()
     } else {
@@ -51,11 +51,12 @@ router.get("/current/openweathermap", (req, res, next) => {
         res.status(400).json({message: "Missing Authorization For OpenWeatherMap API"})
     }
 }, (req, res) => {
-    if (isStringProvided(req.headers.zipcode)) {
+    if (isStringProvided(req.headers.latitude) && isStringProvided(req.headers.longitude)) {
         const unit = "imperial";
-        const zipcode = req.headers.zipcode;
+        const latitude = req.headers.latitude;
+        const longitude = req.headers.longitude;
     
-        let url = `https://api.openweathermap.org/data/2.5/weather?zip=${zipcode}&appid=${OPEN_WEATHER_API_KEY}&units=${unit}`;
+        let url = `https://api.openweathermap.org/data/2.5/weather?lat=${latitude}&lon=${longitude}&appid=${OPEN_WEATHER_API_KEY}&units=${unit}`
 
         let options = {json: true};
 
@@ -69,7 +70,7 @@ router.get("/current/openweathermap", (req, res, next) => {
 
     } else {
         res.status(400).send({
-            message: "Missing required zipcode information"
+            message: "Missing required latitude and/or longitude information"
         })
     }
 })
@@ -137,7 +138,7 @@ router.get("/hourly", (req, res, next) => {
         });
     } else {
         res.status(400).send({
-            message: "Missing required zipcode information"
+            message: "Missing required latitude and/or longitude information"
         })
     }
 })
@@ -153,11 +154,11 @@ router.get("/daily", (req, res, next) => {
         res.status(400).json({message: "Missing Authorization For WeatherBit API"})
     }
 }, (req, res, next) => {
-    if (isStringProvided(req.headers.zipcode)) {
-        const zipcode = req.headers.zipcode;
+    if (isStringProvided(req.headers.latitude) && isStringProvided(req.headers.longitude)) {
+        const latitude = req.headers.latitude;
+        const longitude = req.headers.longitude;
 
-        let url = `https://api.weatherbit.io/v2.0/forecast/daily?` + 
-                        `postal_code=${zipcode}&key=${WEATHER_BIT_API_KEY}&units=I`;
+        let url = `https://api.weatherbit.io/v2.0/forecast/daily?lat=${latitude}&lon=${longitude}&key=${WEATHER_BIT_API_KEY}&units=I`
 
         let options = {json: true};
 
@@ -171,7 +172,7 @@ router.get("/daily", (req, res, next) => {
         
     } else {
         res.status(400).send({
-            message: "Missing required zipcode information"
+            message: "Missing required latitude and/or longitude information"
         })
     }
 })
