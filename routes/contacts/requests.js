@@ -6,9 +6,6 @@ const pool = require('../../utilities/exports').pool
 
 const router = express.Router()
 
-const msg_functions = require('../../utilities/exports').messaging
-
-
 /**
  * @api {post} /contacts Add another user to your contacts
  * @apiName PostContacts
@@ -29,7 +26,7 @@ const msg_functions = require('../../utilities/exports').messaging
 router.post('/', (request, response, next) => {
     response.locals.memberid = null
 
-    if ((!request.body.email) || (!request.body.sender)) {
+    if ((!request.body.email)) {
         response.status(400).send({
             message: "Missing required information"
         })
@@ -65,6 +62,28 @@ router.post('/', (request, response, next) => {
 }, (request, response, next) => {
     let query = `SELECT MemberID_A, MemberID_B 
                  FROM Contacts
+                 WHERE (MemberID_A = $1 AND MemberID_B = $2 AND Verified = 0)
+                 OR (MemberID_B = $1 AND MemberID_A = $2 AND Verified = 0)`
+    let values = [request.decoded.memberid, response.locals.memberid]
+
+    pool.query(query, values)
+        .then(result => {
+            if (result.rowCount > 0) {
+                response.status(400).send({
+                    message: "There is already a pending request"
+                })
+            } else {
+                next()
+            }
+        }).catch(error => {
+            response.status(400).send({
+                message: "SQL Error",
+                error: error
+            })
+        })
+}, (request, response, next) => {
+    let query = `SELECT MemberID_A, MemberID_B 
+                 FROM Contacts
                  WHERE (MemberID_A = $1 AND MemberID_B = $2 AND Verified = 1)
                  OR (MemberID_B = $1 AND MemberID_A = $2 AND Verified = 1)`
     let values = [request.decoded.memberid, response.locals.memberid]
@@ -84,56 +103,32 @@ router.post('/', (request, response, next) => {
                 error: error
             })
         })
-}, (request, response, next) => {
-    let query = `INSERT INTO Contacts (MemberID_A, MemberID_B) 
-                 VALUES ($1, $2)
-                 RETURNING *`
+}, (request, response) => {
+    let query = `INSERT INTO Contacts (MemberID_A, MemberID_B, Verified)
+    VALUES($1, $2, 0)
+    RETURNING * `
     let values = [request.decoded.memberid, response.locals.memberid]
 
     pool.query(query, values)
         .then(result => {
-            next();
+            next()
         }).catch(error => {
             response.status(400).send({
                 message: "SQL Error",
                 error: error
             })
         })
-}, (request, response) => {
-    let query = `SELECT Token 
-                 FROM Push_Token 
-                 WHERE memberid = $1`
-    let values = [response.locals.memberid]
-
-    pool.query(query, values)
-        .then(result => {
-            msg_functions.sendContactRequestToIndividual(
-                result.rows[0].token, request.body.sender, response.locals.memberid)
-            // response
-            response.status(200).send({
-                success: true,
-                message: "Contact added"
-            })
-        }).catch(error => {
-            response.status(200).send({
-                message: "Contact added, Unable to send notification to user.",
-                error: error
-            })
-        })
 })
 
 /**
- * @api {get} /contacts/:email Retrieve the user's contacts
- * @apiName GetContacts
- * @apiGroup Contacts
+ * @api {get} /contacts/:email Retrieve the user's contact requests
+ * @apiName GetRequests
+ * @apiGroup Requests
  * 
  * @apiHeader {String} authorization Valid JSON Web Token JWT
  * @apiParam {String} email the user's email.
  * 
- * @apiSuccess {Object[]} members List of contacts
- * @apiSuccess {String} members.firstname The first name of the contact
- * @apiSuccess {String} members.lastname The last name of the contact
- * @apiSuccess {String} members.nickname The nickname of the contact
+ * @apiSuccess {Object[]} members List of contact requests
  * @apiSuccess {String} members.email The email of the contact
  * 
  * @apiError (400: Missing parameter) {String} message "Missing required information"
@@ -151,9 +146,9 @@ router.get("/:email", (request, response, next) => {
         next()
     }
 }, (request, response, next) => {
-    let query = `SELECT Members.MemberID 
-                 FROM Members 
-                 WHERE Email = $1`
+    let query = `SELECT Members.MemberID
+    FROM Members
+    WHERE Email = $1`
     let values = [request.params.email]
 
     pool.query(query, values)
@@ -172,11 +167,10 @@ router.get("/:email", (request, response, next) => {
             })
         })
 }, (request, response) => {
-    let query = `SELECT Members.FirstName, Members.LastName, Members.Nickname, Members.Email
-                 FROM Members 
-                 WHERE MemberID 
-                 IN ((SELECT MemberID_B FROM Contacts WHERE MemberID_A = $1 AND Verified = 1)
-                 UNION ALL (SELECT MemberID_A FROM Contacts WHERE MemberID_B = $1 AND Verified = 1))`
+    let query = `SELECT Members.Email
+    FROM Members
+    WHERE MemberID
+    IN (SELECT MemberID_A FROM Contacts WHERE MemberID_B = $1 AND Verified = 0)`
     let values = [response.decoded.memberid]
 
     pool.query(query, values)
@@ -246,16 +240,15 @@ router.delete('/:email', (request, response, next) => {
         })
 }, (request, response) => {
     let query = `DELETE FROM Contacts 
-                 WHERE (MemberID_A = $1 AND MemberID_B = $2 AND Verified = 1) 
-                 OR (MemberID_A = $2 AND MemberID_B = $1 AND Verified = 1) 
+                 WHERE (MemberID_A = $1 AND MemberID_B = $2 AND Verified = 0)
                  RETURNING *`
-    let values = [request.decoded.memberid, response.locals.memberid]
+    let values = [response.locals.memberid, request.decoded.memberid]
 
     pool.query(query, values)
         .then(result => {
             response.send(200).send({
                 success: true,
-                message: "Contact removed"
+                message: "Request removed"
             })
         }).catch(error => {
             response.status(400).send({

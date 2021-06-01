@@ -1,7 +1,7 @@
 DELETE FROM Contacts;
 
 INSERT INTO
-    Contacts(MemberID_A, MemberID_B)
+    Contacts(MemberID_A, MemberID_B, Verified)
 VALUES (
 (SELECT
     Members.MemberID
@@ -14,11 +14,12 @@ WHERE
 FROM
     Members
 WHERE 
-    Members.Email = 'test2@test.edu')
+    Members.Email = 'test2@test.edu'),
+1
 );
 
 INSERT INTO
-    Contacts(MemberID_A, MemberID_B)
+    Contacts(MemberID_A, MemberID_B, Verified)
 VALUES (
 (SELECT
     Members.MemberID
@@ -31,11 +32,12 @@ WHERE
 FROM
     Members
 WHERE 
-    Members.Email = 'test3@test.edu')
+    Members.Email = 'test3@test.edu'),
+0
 );
 
 INSERT INTO
-    Contacts(MemberID_A, MemberID_B)
+    Contacts(MemberID_A, MemberID_B, Verified)
 VALUES (
 (SELECT
     Members.MemberID
@@ -48,5 +50,6 @@ WHERE
 FROM
     Members
 WHERE 
-    Members.Email = 'test3@test.edu')
+    Members.Email = 'test3@test.edu'),
+1
 );
