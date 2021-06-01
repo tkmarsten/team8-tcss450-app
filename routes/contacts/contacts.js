@@ -177,7 +177,7 @@ router.get("/:email", (request, response, next) => {
                  WHERE MemberID 
                  IN ((SELECT MemberID_B FROM Contacts WHERE MemberID_A = $1 AND Verified = 1)
                  UNION ALL (SELECT MemberID_A FROM Contacts WHERE MemberID_B = $1 AND Verified = 1))`
-    let values = [response.decoded.memberid]
+    let values = [request.decoded.memberid]
 
     pool.query(query, values)
         .then(result => {
