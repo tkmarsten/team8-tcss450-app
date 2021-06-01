@@ -33,6 +33,7 @@ app.use('/chats', middleware.checkToken, require('./routes/chat/chats.js'))
 app.use('/auth', middleware.checkToken, require('./routes/auth/pushyregister.js'))
 app.use('/weather', require('./routes/openweather.js'))
 app.use('/contacts', middleware.checkToken, require('./routes/contacts/contacts.js'))
+app.use('/requests', middleware.checkToken, require('./routes/contacts/requests.js'))
 app.use('/search', middleware.checkToken, require('./routes/contacts/search.js'))
 
 /*

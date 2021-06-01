@@ -176,7 +176,7 @@ router.get("/:email", (request, response, next) => {
     pool.query(query, values)
         .then(result => {
             response.send({
-                contacts: result.rows
+                requests: result.rows
             })
         }).catch(error => {
             response.status(400).send({
