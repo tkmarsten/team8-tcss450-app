@@ -26,13 +26,13 @@ VALUES (
 FROM
     Members
 WHERE 
-    Members.Email = 'test1@test.edu'),
+    Members.Email = 'test3@test.edu'),
 (SELECT
     Members.MemberID
 FROM
     Members
 WHERE 
-    Members.Email = 'test3@test.edu'),
+    Members.Email = 'test1@test.edu'),
 0
 );
 
