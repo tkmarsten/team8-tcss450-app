@@ -52,8 +52,7 @@ router.get("/:email", (request, response, next) => {
                 })
             } else {
                 response.status(200).send({
-                    success: true,
-                    message: "User found"
+                    success: true
                 })
             }
         }).catch(error => {
