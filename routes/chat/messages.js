@@ -120,7 +120,7 @@ router.post("/", (request, response, next) => {
                 error: err
             })
         })
-}, (request, response) => {
+}, (request, response, next) => {
     // send a notification of this message to ALL members with registered tokens
     let query = `SELECT token FROM Push_Token
                         INNER JOIN ChatMembers ON
@@ -139,10 +139,24 @@ router.post("/", (request, response, next) => {
                 success: true
             })
         }).catch(err => {
+            next();
+        })
+}, (request, response) => {
+    let query =  `INSERT INTO Pending (MemberID, type)
+                VALUES($1, $2)
+                RETURNING * `
+    let values = ["15", "Contact"]  // TODO pushes a notification for each recipient without a token
 
-            response.status(400).send({
-                message: "SQL Error on select from push token",
-                error: err
+    pool.query(query, values)
+        .then(result => {
+            response.status(200).send({
+                success: true,
+                message: "Message Sent, Notification logged."
+            })
+        }).catch(error => {
+            response.status(200).send({
+                message: "Message Sent, Notification not saved.",
+                error: error
             })
         })
 })

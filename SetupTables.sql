@@ -58,3 +58,10 @@ CREATE TABLE Push_Token (
     Token VARCHAR(255),
     FOREIGN KEY(MemberID) REFERENCES Members(MemberID)
 );
+DROP TABLE IF EXISTS Pending;
+CREATE TABLE Pending (
+    PrimaryKey SERIAL PRIMARY KEY,
+    MemberID INT NOT NULL,
+    Type VARCHAR(255) NOT NULL,
+    FOREIGN KEY(MemberID) REFERENCES Members(MemberID)
+);

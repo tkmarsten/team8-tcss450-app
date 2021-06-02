@@ -99,7 +99,7 @@ router.post('/', (request, response, next) => {
                 error: error
             })
         })
-}, (request, response) => {
+}, (request, response, next) => {
     let query = `SELECT Token 
                  FROM Push_Token 
                  WHERE memberid = $1`
@@ -115,8 +115,23 @@ router.post('/', (request, response, next) => {
                 message: "Contact added"
             })
         }).catch(error => {
+            next();
+        })
+}, (request, response) => {
+    let query =  `INSERT INTO Pending (MemberID, type)
+                VALUES($1, $2)
+                RETURNING * `
+    let values = [response.locals.memberid, "Contact"]
+
+    pool.query(query, values)
+        .then(result => {
             response.status(200).send({
-                message: "Contact added, Unable to send notification to user.",
+                success: true,
+                message: "Contact added, Notification logged."
+            })
+        }).catch(error => {
+            response.status(200).send({
+                message: "Contact added, Notification not saved.",
                 error: error
             })
         })

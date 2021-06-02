@@ -103,7 +103,7 @@ router.post('/', (request, response, next) => {
                 error: error
             })
         })
-}, (request, response) => {
+}, (request, response, next) => {
     let query = `INSERT INTO Contacts (MemberID_A, MemberID_B, Verified)
     VALUES($1, $2, 0)
     RETURNING * `
@@ -111,13 +111,46 @@ router.post('/', (request, response, next) => {
 
     pool.query(query, values)
         .then(result => {
+            next();
+        }).catch(error => {
+            response.status(400).send({
+                message: "SQL Error",
+                error: error
+            })
+        })
+}, (request, response, next) => {
+    let query = `SELECT Token 
+                 FROM Push_Token 
+                 WHERE memberid = $1`
+    let values = [response.locals.memberid]
+
+    pool.query(query, values)
+        .then(result => {
+            msg_functions.sendContactRequestToIndividual(
+                result.rows[0].token, request.body.sender, response.locals.memberid)
+            // response
             response.status(200).send({
                 success: true,
                 message: "Request sent"
             })
         }).catch(error => {
-            response.status(400).send({
-                message: "SQL Error",
+            next();
+        })
+}, (request, response) => {
+    let query =  `INSERT INTO Pending (MemberID, type)
+                VALUES($1, $2)
+                RETURNING * `
+    let values = [response.locals.memberid, "Contact"]
+
+    pool.query(query, values)
+        .then(result => {
+            response.status(200).send({
+                success: true,
+                message: "Request sent, Notification logged."
+            })
+        }).catch(error => {
+            response.status(200).send({
+                message: "Request sent, Notification not saved.",
                 error: error
             })
         })
