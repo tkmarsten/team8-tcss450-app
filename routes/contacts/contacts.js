@@ -85,9 +85,9 @@ router.post('/', (request, response, next) => {
             })
         })
 }, (request, response, next) => {
-    let query = `INSERT INTO Contacts (MemberID_A, MemberID_B) 
-                 VALUES ($1, $2)
-                 RETURNING *`
+    let query = `UPDATE Contacts 
+                 SET Verified = 1
+                 WHERE (MemberID_B = $1 AND MemberID_A = $2 AND Verified = 0)`
     let values = [request.decoded.memberid, response.locals.memberid]
 
     pool.query(query, values)
