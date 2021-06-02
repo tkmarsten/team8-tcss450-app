@@ -111,7 +111,10 @@ router.post('/', (request, response, next) => {
 
     pool.query(query, values)
         .then(result => {
-            next()
+            response.status(200).send({
+                success: true,
+                message: "Request sent"
+            })
         }).catch(error => {
             response.status(400).send({
                 message: "SQL Error",
