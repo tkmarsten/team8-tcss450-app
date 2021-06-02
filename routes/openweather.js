@@ -20,10 +20,9 @@ router.get("/validate_zipcode", (req, res, next) => {
     }
 }, (req, res) => {
     if (isStringProvided(req.headers.zipcode)) {
-        const unit = "imperial";
         const zipcode = req.headers.zipcode;
 
-        let url = `https://api.openweathermap.org/data/2.5/weather?zip=${zipcode}&appid=${OPEN_WEATHER_API_KEY}&units=${unit}`;
+        let url = `https://api.openweathermap.org/data/2.5/weather?zip=${zipcode}&appid=${OPEN_WEATHER_API_KEY}&units=imperial`;
 
         let options = {json: true};
 
@@ -50,11 +49,10 @@ router.get("/validate_lat_lon", (req, res, next) => {
     }
 }, (req, res) => {
     if (isStringProvided(req.headers.latitude) && isStringProvided(req.headers.longitude)) {
-        const unit = "imperial";
         const latitude = req.headers.latitude
         const longitude = req.headers.longitude
 
-        let url = `https://api.openweathermap.org/data/2.5/weather?lat=${latitude}&lon=${longitude}&appid=${OPEN_WEATHER_API_KEY}&units=${unit}`;
+        let url = `https://api.openweathermap.org/data/2.5/weather?lat=${latitude}&lon=${longitude}&appid=${OPEN_WEATHER_API_KEY}&units=imperial`;
 
         let options = {json: true};
 
@@ -83,11 +81,10 @@ router.get("/current/openweathermap", (req, res, next) => {
     }
 }, (req, res) => {
     if (isStringProvided(req.headers.latitude) && isStringProvided(req.headers.longitude)) {
-        const unit = "imperial";
         const latitude = req.headers.latitude;
         const longitude = req.headers.longitude;
     
-        let url = `https://api.openweathermap.org/data/2.5/weather?lat=${latitude}&lon=${longitude}&appid=${OPEN_WEATHER_API_KEY}&units=${unit}`
+        let url = `https://api.openweathermap.org/data/2.5/weather?lat=${latitude}&lon=${longitude}&appid=${OPEN_WEATHER_API_KEY}&units=imperial`
 
         let options = {json: true};
 
@@ -95,7 +92,7 @@ router.get("/current/openweathermap", (req, res, next) => {
             if (!error && response.statusCode == 200) {
                 res.send(JSON.parse(JSON.stringify(body)));
             } else {
-                res.send({error: "No Zipcode Found"});
+                res.send({error: "No Valid Latitude/Longitude Found"});
             }
         });
 
@@ -150,13 +147,12 @@ router.get("/hourly", (req, res, next) => {
     }
 }, (req, res, next) => {
     if (isStringProvided(req.headers.latitude) && isStringProvided(req.headers.longitude)) {
-        const unit = "imperial";
         const lat = req.headers.latitude;
         const long = req.headers.longitude;
 
         let url = `https://api.openweathermap.org/data/2.5/onecall?` + 
                     `lat=${lat}&lon=${long}&exclude=current,minutely,daily,alerts` + 
-                        `&appid=${OPEN_WEATHER_API_KEY}&units=${unit}`;
+                        `&appid=${OPEN_WEATHER_API_KEY}&units=imperial`;
 
         let options = {json: true};
 
@@ -164,7 +160,7 @@ router.get("/hourly", (req, res, next) => {
             if (!error && response.statusCode == 200) {
                 res.send(JSON.parse(JSON.stringify(body)));
             } else {
-                res.send({error: "No Zipcode Found"});
+                res.send({error: "No Valid Latitude/Longitude Found"});
             }
         });
     } else {
@@ -197,7 +193,7 @@ router.get("/daily", (req, res, next) => {
             if (!error && response.statusCode == 200) {
                 res.send(JSON.parse(JSON.stringify(body)));
             } else {
-                res.send({error: "No Zipcode Found"});
+                res.send({error: "No Valid Latitude/Longitude Found"});
             }
         });
         
