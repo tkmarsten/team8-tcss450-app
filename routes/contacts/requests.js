@@ -133,8 +133,12 @@ router.post('/', (request, response, next) => {
                 success: true,
                 message: "Request sent"
             })
-        }).catch(error => {
             next();
+        }).catch(error => {
+            response.status(400).send({
+                message: "SQL Error",
+                error: error
+            })
         })
 }, (request, response) => {
     let query =  `INSERT INTO Pending (MemberID, type)
