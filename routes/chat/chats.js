@@ -861,4 +861,73 @@ router.delete("/:chatId/:email", (request, response, next) => {
 }
 )
 
+/**
+ * @api {delete} /chats/chatRoom/:chatId? Request delete a user from a chat
+ * @apiName DeleteChats
+ * @apiGroup Chats
+ * 
+ * @apiDescription Deletes the chat room between two people when one person decides to leave.  
+ * 
+ * @apiParam {Number} chatId the chat to delete the user from
+ * 
+ * @apiSuccess {boolean} success true when the chatID is deleted
+ * 
+ * @apiError (404: Chat Not Found) {String} message "chatID not found"
+ * @apiError (400: Invalid Parameter) {String} message "Malformed parameter. chatId must be a number" 
+ * 
+ * @apiError (400: SQL Error) {String} message the reported SQL error details
+ * 
+ * @apiUse JSONError
+ */
+ router.delete("/chatRoom/:chatId", (request, response, next) => {
+    //validate on empty parameters
+    if (!request.params.chatId) {
+        response.status(400).send({
+            message: "Missing required information"
+        })
+    } else if (isNaN(request.params.chatId)) {
+        response.status(400).send({
+            message: "Malformed parameter. chatId must be a number"
+        })
+    } else {
+        next()
+    }
+}, (request, response, next) => {
+    //validate chat id exists
+    let query = 'SELECT * FROM CHATS WHERE ChatId=$1'
+    let values = [request.params.chatId]
+
+    pool.query(query, values)
+        .then(result => {
+            if (result.rowCount == 0) {
+                response.status(404).send({
+                    message: "Chat ID not found"
+                })
+            } else {
+                next()
+            }
+        }).catch(error => {
+            response.status(400).send({
+                message: "SQL Error",
+                error: error
+            })
+        })
+}, (request, response) => {
+    //Delete the chat room
+    let query = 'DELETE FROM ChatMembers WHERE chatID=$1'
+    let values = [request.params.chatId]
+
+    pool.query(query, values)
+        .then(result => {
+            response.send({
+                success: true
+            })
+        }).catch(error => {
+            response.status(400).send({
+                message: "SQL Error",
+                error: error
+            })
+        })
+}
+)
 module.exports = router
