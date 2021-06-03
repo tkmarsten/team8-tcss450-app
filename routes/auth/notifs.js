@@ -48,6 +48,14 @@ router.get("/", (request, response, next) => {
 
 
 router.delete("/", (request, response, next) => {
+    if (!request.body.type) {
+        response.status(400).send({
+            message: "Missing required information"
+        })
+    } else {
+        next()
+    }
+}, (request, response, next) => {
     let query = `SELECT Members.Email 
                  FROM Members 
                  WHERE Email = $1`
@@ -69,8 +77,8 @@ router.delete("/", (request, response, next) => {
             })
         })
 }, (request, response) => {
-    let query = 'DELETE FROM pending WHERE memberid=$1'
-    let values = [request.decoded.memberid]
+    let query = 'DELETE FROM pending WHERE memberid=$1 AND type=$2'
+    let values = [request.decoded.memberid, request.body.type]
 
     pool.query(query, values)
         .then(result => {
