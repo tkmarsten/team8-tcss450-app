@@ -919,7 +919,7 @@ router.delete("/:chatId/:email", (request, response, next) => {
 
     pool.query(query, values)
         .then(result => {
-            response.send({
+            response.status(200).send({
                 success: true
             })
         }).catch(error => {
