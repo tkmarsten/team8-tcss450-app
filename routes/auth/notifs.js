@@ -36,7 +36,7 @@ router.get("/", (request, response, next) => {
     pool.query(query, values)
         .then(result => {
             response.status(200).send({
-                notifications : list
+                notifications : result.rows
             })
         }).catch(error => {
             response.status(401).send({
