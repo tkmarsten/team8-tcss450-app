@@ -129,11 +129,11 @@ router.post('/', (request, response, next) => {
             // msg_functions.sendContactRequestToIndividual(
             //     result.rows[0].token, request.body.sender, response.locals.memberid)
             // response
-            response.status(200).send({
-                success: true,
-                message: "Request sent"
-            })
-            next();
+            // response.status(200).send({
+            //     success: true,
+            //     message: "Request sent"
+            // })
+            next()
         }).catch(error => {
             response.status(400).send({
                 message: "SQL Error",
@@ -155,8 +155,8 @@ router.post('/', (request, response, next) => {
                 message: "Request sent, Notification logged: " + result.rows[0].primarykey
             })
         }).catch(error => {
-            response.status(200).send({
-                message: "Request sent, Notification not saved.",
+            response.status(400).send({
+                message: "SQL Error",
                 error: error
             })
         })
