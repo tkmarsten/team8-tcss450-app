@@ -48,7 +48,7 @@ router.get("/", (request, response, next) => {
             list = result;
             next();
         }).catch(error => {
-            response.status(400).send({
+            response.status(401).send({
                 message: "SQL Error: Retrieving List",
                 error: error
             })
@@ -63,8 +63,9 @@ router.get("/", (request, response, next) => {
                 notifications : list
             })
         }).catch(error => {
-            response.status(400).send({
+            response.status(402).send({
                 message: "SQL Error: Clearing List",
+                notifications : list,
                 error: error
             })
         })
