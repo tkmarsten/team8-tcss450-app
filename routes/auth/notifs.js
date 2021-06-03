@@ -48,7 +48,7 @@ router.get("/", (request, response, next) => {
 
 
 router.delete("/", (request, response, next) => {
-    if (!request.params.type) {
+    if (!request.body.type) {
         response.status(400).send({
             message: "Missing required information"
         })
