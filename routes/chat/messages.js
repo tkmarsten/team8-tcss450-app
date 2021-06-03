@@ -136,16 +136,31 @@ router.post("/", (request, response, next) => {
                     entry.token,
                     response.message))
             response.send({
+                message : "Message sent, notification sent",
                 success: true
             })
         }).catch(err => {
             next();
         })
-}, (request, response) => {
+}, (request, response, next) => { 
+    let query = `SELECT memberid FROM chatmembers WHERE chatid=$1 AND NOT memberid=$2`
+    let values = [request.body.chatId, request.decoded.memberid]
+
+    pool.query(query, values)
+        .then(result => {
+            let temp = result.rows
+            next();
+        }).catch(error => {
+            response.status(200).send({
+                message: "Message Sent, Notification not saved.",
+                error: error
+            })
+        })
+} ,(request, response) => {
     let query =  `INSERT INTO Pending (MemberID, type)
                 VALUES($1, $2)
                 RETURNING * `
-    let values = ["15", "Contact"]  // TODO pushes a notification for each recipient without a token
+    let values = [temp[0], "Message"]  // TODO pushes a notification for each recipient without a token
 
     pool.query(query, values)
         .then(result => {
