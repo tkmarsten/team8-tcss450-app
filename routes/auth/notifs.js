@@ -47,9 +47,9 @@ router.get("/", (request, response, next) => {
 })
 
 
-router.delete("/", (request, response, next) => {
+router.post("/", (request, response, next) => {
     if (!request.body.type) {
-        response.status(400).send({
+        response.status(402).send({
             message: "Missing required information"
         })
     } else {
@@ -86,7 +86,7 @@ router.delete("/", (request, response, next) => {
                 message : "Pending notifications deleted."
             })
         }).catch(error => {
-            response.status(402).send({
+            response.status(401).send({
                 message: "SQL Error: Clearing List",
                 error: error
             })
