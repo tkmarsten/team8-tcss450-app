@@ -146,7 +146,7 @@ router.post('/', (request, response, next) => {
         .then(result => {
             response.status(200).send({
                 success: true,
-                message: "Request sent, Notification logged."
+                message: "Request sent, Notification logged: " + result.rows[0].primarykey
             })
         }).catch(error => {
             response.status(200).send({

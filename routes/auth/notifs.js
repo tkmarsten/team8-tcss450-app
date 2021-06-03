@@ -8,17 +8,7 @@ const pool = require('../../utilities/exports').pool
 
 const router = express.Router()
 
-//body should contain email address of self, returns list of pending notifications, then deletes them from db.
 router.get("/", (request, response, next) => {
-
-    // if (!request.body.email) {
-    //     response.status(400).send({
-    //         message: "Missing required information"
-    //     })
-    // } else {
-        next()
-    //}
-}, (request, response, next) => {
     let query = `SELECT Members.Email 
                  FROM Members 
                  WHERE Email = $1`
@@ -39,17 +29,42 @@ router.get("/", (request, response, next) => {
                 error: error
             })
         })
-}, (request, response, next) => {
+}, (request, response) => {
     let query = 'SELECT type FROM pending WHERE memberid=$1'
     let values = [request.decoded.memberid]
 
     pool.query(query, values)
         .then(result => {
-            list = result;
-            next();
+            response.status(200).send({
+                notifications : list
+            })
         }).catch(error => {
             response.status(401).send({
                 message: "SQL Error: Retrieving List",
+                error: error
+            })
+        })
+})
+
+
+router.delete("/", (request, response, next) => {
+    let query = `SELECT Members.Email 
+                 FROM Members 
+                 WHERE Email = $1`
+    let values = [request.decoded.email]
+
+    pool.query(query, values)
+        .then(result => {
+            if (result.rowCount == 0) {
+                response.status(404).send({
+                    message: "Email not found"
+                })
+            } else {
+                next();
+            }
+        }).catch(error => {
+            response.status(401).send({
+                message: "SQL Error",
                 error: error
             })
         })
@@ -60,12 +75,11 @@ router.get("/", (request, response, next) => {
     pool.query(query, values)
         .then(result => {
             response.status(200).send({
-                notifications : list
+                message : "Pending notifications deleted."
             })
         }).catch(error => {
             response.status(402).send({
                 message: "SQL Error: Clearing List",
-                notifications : list,
                 error: error
             })
         })
