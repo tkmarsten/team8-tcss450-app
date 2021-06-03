@@ -11,18 +11,18 @@ const router = express.Router()
 //body should contain email address of self, returns list of pending notifications, then deletes them from db.
 router.get("/", (request, response, next) => {
 
-    if (!request.body.email) {
-        response.status(400).send({
-            message: "Missing required information"
-        })
-    } else {
+    // if (!request.body.email) {
+    //     response.status(400).send({
+    //         message: "Missing required information"
+    //     })
+    // } else {
         next()
-    }
+    //}
 }, (request, response, next) => {
     let query = `SELECT Members.Email 
                  FROM Members 
                  WHERE Email = $1`
-    let values = [request.body.email]
+    let values = [request.decoded.email]
 
     pool.query(query, values)
         .then(result => {
@@ -34,7 +34,7 @@ router.get("/", (request, response, next) => {
                 next();
             }
         }).catch(error => {
-            response.status(400).send({
+            response.status(401).send({
                 message: "SQL Error",
                 error: error
             })
