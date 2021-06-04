@@ -126,40 +126,40 @@ router.post('/', (request, response, next) => {
 
     pool.query(query, values)
         .then(result => {
-            // msg_functions.sendContactRequestToIndividual(
-            //     result.rows[0].token, request.body.sender, response.locals.memberid)
-            // response
-            // response.status(200).send({
-            //     success: true,
-            //     message: "Request sent"
-            // })
-            next()
-        }).catch(error => {
-            response.status(400).send({
-                message: "SQL Error",
-                error: error
-            })
-        })
-}, (request, response) => {
-    let query =  `INSERT INTO Pending (MemberID, type)
-                VALUES($1, $2)
-                RETURNING * `
-    let values = [response.locals.memberid, "Contact"]
-
-    pool.query(query, values)
-        .then(result => {
             msg_functions.sendContactRequestToIndividual(
                 result.rows[0].token, request.body.sender, response.locals.memberid)
+            response
             response.status(200).send({
                 success: true,
-                message: "Request sent, Notification logged: " + result.rows[0].primarykey
+                message: "Request sent"
             })
+            
         }).catch(error => {
             response.status(400).send({
                 message: "SQL Error",
                 error: error
             })
         })
+// }, (request, response) => {
+//     let query =  `INSERT INTO Pending (MemberID, type)
+//                 VALUES($1, $2)
+//                 RETURNING * `
+//     let values = [response.locals.memberid, "Contact"]
+
+//     pool.query(query, values)
+//         .then(result => {
+//             // msg_functions.sendContactRequestToIndividual(
+//             //     result.rows[0].token, request.body.sender, response.locals.memberid)
+//             // response.status(200).send({
+//             //     success: true,
+//             //     message: "Request sent, Notification logged: " + result.rows[0].primarykey
+//             // })
+//         }).catch(error => {
+//             response.status(400).send({
+//                 message: "SQL Error",
+//                 error: error
+//             })
+//         })
 })
 
 /**
