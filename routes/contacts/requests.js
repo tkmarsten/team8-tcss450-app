@@ -111,34 +111,40 @@ router.post('/', (request, response, next) => {
 
     pool.query(query, values)
         .then(result => {
-            next();
-        }).catch(error => {
-            response.status(400).send({
-                message: "SQL Error",
-                error: error
-            })
-        })
-}, (request, response, next) => {
-    let query = `SELECT Token 
-                 FROM Push_Token 
-                 WHERE memberid = $1`
-    let values = [response.locals.memberid]
-
-    pool.query(query, values)
-        .then(result => {
+            //next();
             msg_functions.sendContactRequestToIndividual(
                 result.rows[0].token, request.body.sender, response.locals.memberid)
             response.status(200).send({
                 success: true,
                 message: "Request sent"
             })
-            
         }).catch(error => {
             response.status(400).send({
-                message: "SQL Error",
+                message: "SQL Error, for sending request",
                 error: error
             })
         })
+// }, (request, response, next) => {
+//     let query = `SELECT Token 
+//                  FROM Push_Token 
+//                  WHERE memberid = $1`
+//     let values = [response.locals.memberid]
+
+//     pool.query(query, values)
+//         .then(result => {
+//             msg_functions.sendContactRequestToIndividual(
+//                 result.rows[0].token, request.body.sender, response.locals.memberid)
+//             response.status(200).send({
+//                 success: true,
+//                 message: "Request sent"
+//             })
+            
+//         }).catch(error => {
+//             response.status(400).send({
+//                 message: "SQL Error, for sending request",
+//                 error: error
+//             })
+//         })
 // }, (request, response) => {
 //     let query =  `INSERT INTO Pending (MemberID, type)
 //                 VALUES($1, $2)
