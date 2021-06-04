@@ -128,7 +128,6 @@ router.post('/', (request, response, next) => {
         .then(result => {
             msg_functions.sendContactRequestToIndividual(
                 result.rows[0].token, request.body.sender, response.locals.memberid)
-            response
             response.status(200).send({
                 success: true,
                 message: "Request sent"
