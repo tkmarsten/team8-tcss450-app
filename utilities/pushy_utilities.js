@@ -34,7 +34,7 @@ function sendContactRequestToIndividual(token, email, id) {
         "email" : email,
         "memberid": id
     }
-
+    //console.log("test success")
     // Send push notification via the Send Notifications API 
     // https://pushy.me/docs/api/send-notifications 
     pushyAPI.sendPushNotification(data, token, {}, function (err, id) {
