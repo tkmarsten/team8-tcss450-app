@@ -9,17 +9,18 @@ const contact_functions = require('../../utilities/exports').contacts
 const router = express.Router()
 
 /**
- * @api {post} /contacts Add another user to your contacts
- * @apiName PostContacts
- * @apiGroup Contacts
+ * @api {post} /requests Add another user to your contacts
+ * @apiName PostRequests
+ * @apiGroup Requests
  * 
  * @apiHeader {String} authorization Valid JSON Web Token JWT
  * @apiParam {String} email the contact's email.
  * 
- * @apiSuccess (Success 200) {boolean} success true when the contact is added
+ * @apiSuccess (Success 200) {boolean} success true when the contact request is sent
  * 
  * @apiError (400: Missing body) {String} message "Missing required information"
- * @apiError (400: Duplicate contact) {String} message "User is already a contact"
+ * @apiError (400: Duplicate contact request) {String} message "There is already a pending request"
+ * @apiError (400: Self contact request) {String} message "User attempting to add themselves"
  * @apiError (400: SQL Error) {String} message the reported SQL error details
  * @apiError (404: Email not found) {String} message "Email not found"
  * 
@@ -126,7 +127,7 @@ router.post('/', (request, response, next) => {
                 error: error
             })
         })
-}, (request, response, next) => {
+}, (request, response) => {
     let query = `SELECT Token 
                  FROM Push_Token 
                  WHERE memberid = $1`
@@ -140,37 +141,17 @@ router.post('/', (request, response, next) => {
                 success: true,
                 message: "Request sent"
             })
-            
+
         }).catch(error => {
             response.status(400).send({
                 message: "SQL Error, for sending request",
                 error: error
             })
         })
-// }, (request, response) => {
-//     let query =  `INSERT INTO Pending (MemberID, type)
-//                 VALUES($1, $2)
-//                 RETURNING * `
-//     let values = [response.locals.memberid, "Contact"]
-
-//     pool.query(query, values)
-//         .then(result => {
-//             // msg_functions.sendContactRequestToIndividual(
-//             //     result.rows[0].token, request.body.sender, response.locals.memberid)
-//             // response.status(200).send({
-//             //     success: true,
-//             //     message: "Request sent, Notification logged: " + result.rows[0].primarykey
-//             // })
-//         }).catch(error => {
-//             response.status(400).send({
-//                 message: "SQL Error",
-//                 error: error
-//             })
-//         })
 })
 
 /**
- * @api {get} /contacts/:email Retrieve the user's contact requests
+ * @api {get} /requests/:email Retrieve the user's contact requests
  * @apiName GetRequests
  * @apiGroup Requests
  * 
@@ -236,16 +217,17 @@ router.get("/:email", (request, response, next) => {
 })
 
 /**
- * @api {delete} /contacts Remove user's selected contact
- * @apiName DeleteContacts
- * @apiGroup Contacts
+ * @api {delete} /requests/:email Remove user's selected contact
+ * @apiName DeleteRequests
+ * @apiGroup Requests
  * 
  * @apiHeader {String} authorization Valid JSON Web Token JWT
  * @apiParam {String} email the contact's email.
  * 
- * @apiSuccess (Success 200) {boolean} success true when the contact is deleted
+ * @apiSuccess (Success 200) {boolean} success true when the contact request is deleted
  * 
  * @apiError (400: Missing body) {String} message "Missing required information"
+ * @apiError (400: Self deletion) {String} message "User attempting to delete themselves"
  * @apiError (400: SQL Error) {String} message the reported SQL error details
  * @apiError (404: Email not found) {String} message "Email not found"
  * 

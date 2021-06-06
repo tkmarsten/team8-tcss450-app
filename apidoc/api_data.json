@@ -72,7 +72,7 @@
       }
     },
     "version": "0.0.0",
-    "filename": "routes/pushyregister.js",
+    "filename": "routes/auth/pushyregister.js",
     "groupTitle": "Auth"
   },
   {
@@ -169,7 +169,7 @@
       }
     },
     "version": "0.0.0",
-    "filename": "routes/signin.js",
+    "filename": "routes/auth/signin.js",
     "groupTitle": "Auth"
   },
   {
@@ -294,7 +294,7 @@
       }
     },
     "version": "0.0.0",
-    "filename": "routes/register.js",
+    "filename": "routes/auth/register.js",
     "groupTitle": "Auth"
   },
   {
@@ -383,16 +383,16 @@
       }
     },
     "version": "0.0.0",
-    "filename": "routes/pushyregister.js",
+    "filename": "routes/auth/pushyregister.js",
     "groupTitle": "Auth"
   },
   {
     "type": "delete",
-    "url": "/chats/:chatId?/:email?",
+    "url": "/chats/chatRoom/:chatId?",
     "title": "Request delete a user from a chat",
     "name": "DeleteChats",
     "group": "Chats",
-    "description": "<p>Does not delete the user associated with the required JWT but instead deletes the user based on the email parameter.</p>",
+    "description": "<p>Deletes the chat room between two people when one person decides to leave.</p>",
     "parameter": {
       "fields": {
         "Parameter": [
@@ -402,13 +402,6 @@
             "optional": false,
             "field": "chatId",
             "description": "<p>the chat to delete the user from</p>"
-          },
-          {
-            "group": "Parameter",
-            "type": "String",
-            "optional": false,
-            "field": "email",
-            "description": "<p>the email of the user to delete</p>"
           }
         ]
       }
@@ -421,7 +414,7 @@
             "type": "boolean",
             "optional": false,
             "field": "success",
-            "description": "<p>true when the name is deleted</p>"
+            "description": "<p>true when the chatID is deleted</p>"
           }
         ]
       }
@@ -437,15 +430,6 @@
             "description": "<p>&quot;chatID not found&quot;</p>"
           }
         ],
-        "404: Email Not Found": [
-          {
-            "group": "404: Email Not Found",
-            "type": "String",
-            "optional": false,
-            "field": "message",
-            "description": "<p>&quot;email not found&quot;</p>"
-          }
-        ],
         "400: Invalid Parameter": [
           {
             "group": "400: Invalid Parameter",
@@ -455,13 +439,98 @@
             "description": "<p>&quot;Malformed parameter. chatId must be a number&quot;</p>"
           }
         ],
-        "400: Duplicate Email": [
+        "400: SQL Error": [
           {
-            "group": "400: Duplicate Email",
+            "group": "400: SQL Error",
             "type": "String",
             "optional": false,
             "field": "message",
-            "description": "<p>&quot;user not in chat&quot;</p>"
+            "description": "<p>the reported SQL error details</p>"
+          }
+        ],
+        "400: JSON Error": [
+          {
+            "group": "400: JSON Error",
+            "type": "String",
+            "optional": false,
+            "field": "message",
+            "description": "<p>&quot;malformed JSON in parameters&quot;</p>"
+          }
+        ]
+      }
+    },
+    "version": "0.0.0",
+    "filename": "routes/chat/chats.js",
+    "groupTitle": "Chats"
+  },
+  {
+    "type": "get",
+    "url": "/chats/chatIDs/:email",
+    "title": "Request to get the all chatID's connected to a given email.",
+    "name": "GetChatIDs",
+    "group": "Chats",
+    "header": {
+      "fields": {
+        "Header": [
+          {
+            "group": "Header",
+            "type": "String",
+            "optional": false,
+            "field": "authorization",
+            "description": "<p>Valid JSON Web Token JWT</p>"
+          }
+        ]
+      }
+    },
+    "parameter": {
+      "fields": {
+        "Parameter": [
+          {
+            "group": "Parameter",
+            "type": "String",
+            "optional": false,
+            "field": "the",
+            "description": "<p>user's email</p>"
+          }
+        ]
+      }
+    },
+    "success": {
+      "fields": {
+        "Success 200": [
+          {
+            "group": "Success 200",
+            "type": "Number",
+            "optional": false,
+            "field": "rowCount",
+            "description": "<p>the number of chatID's returned</p>"
+          },
+          {
+            "group": "Success 200",
+            "type": "Object[]",
+            "optional": false,
+            "field": "chatID",
+            "description": "<p>List</p>"
+          },
+          {
+            "group": "Success 200",
+            "type": "Number",
+            "optional": false,
+            "field": "ChatMembers.chatID",
+            "description": "<p>the chat ID.</p>"
+          }
+        ]
+      }
+    },
+    "error": {
+      "fields": {
+        "404: ChatId Not Found": [
+          {
+            "group": "404: ChatId Not Found",
+            "type": "String",
+            "optional": false,
+            "field": "message",
+            "description": "<p>&quot;Email not found&quot;</p>"
           }
         ],
         "400: Missing Parameters": [
@@ -494,13 +563,102 @@
       }
     },
     "version": "0.0.0",
-    "filename": "routes/chats.js",
+    "filename": "routes/chat/chats.js",
+    "groupTitle": "Chats"
+  },
+  {
+    "type": "get",
+    "url": "/chats/nickname/:email",
+    "title": "Request to get the nickname for a given email",
+    "name": "GetChatIDs",
+    "group": "Chats",
+    "header": {
+      "fields": {
+        "Header": [
+          {
+            "group": "Header",
+            "type": "String",
+            "optional": false,
+            "field": "authorization",
+            "description": "<p>Valid JSON Web Token JWT</p>"
+          }
+        ]
+      }
+    },
+    "parameter": {
+      "fields": {
+        "Parameter": [
+          {
+            "group": "Parameter",
+            "type": "String",
+            "optional": false,
+            "field": "the",
+            "description": "<p>user's email</p>"
+          }
+        ]
+      }
+    },
+    "success": {
+      "fields": {
+        "Success 200": [
+          {
+            "group": "Success 200",
+            "type": "String",
+            "optional": false,
+            "field": "the",
+            "description": "<p>nickname.</p>"
+          }
+        ]
+      }
+    },
+    "error": {
+      "fields": {
+        "404: ChatId Not Found": [
+          {
+            "group": "404: ChatId Not Found",
+            "type": "String",
+            "optional": false,
+            "field": "message",
+            "description": "<p>&quot;Email not found&quot;</p>"
+          }
+        ],
+        "400: Missing Parameters": [
+          {
+            "group": "400: Missing Parameters",
+            "type": "String",
+            "optional": false,
+            "field": "message",
+            "description": "<p>&quot;Missing required information&quot;</p>"
+          }
+        ],
+        "400: SQL Error": [
+          {
+            "group": "400: SQL Error",
+            "type": "String",
+            "optional": false,
+            "field": "message",
+            "description": "<p>the reported SQL error details</p>"
+          }
+        ],
+        "400: JSON Error": [
+          {
+            "group": "400: JSON Error",
+            "type": "String",
+            "optional": false,
+            "field": "message",
+            "description": "<p>&quot;malformed JSON in parameters&quot;</p>"
+          }
+        ]
+      }
+    },
+    "version": "0.0.0",
+    "filename": "routes/chat/chats.js",
     "groupTitle": "Chats"
   },
   {
     "type": "get",
     "url": "/chats/:chatId?",
-    "title": "Request to get the emails of user in a chat",
+    "title": "Request to get the nicknames of user in a chat",
     "name": "GetChats",
     "group": "Chats",
     "header": {
@@ -545,6 +703,13 @@
             "optional": false,
             "field": "members",
             "description": "<p>List of members in the chat</p>"
+          },
+          {
+            "group": "Success 200",
+            "type": "String",
+            "optional": false,
+            "field": "messages.nickname",
+            "description": "<p>The nickname for the member in the chat</p>"
           },
           {
             "group": "Success 200",
@@ -606,7 +771,7 @@
       }
     },
     "version": "0.0.0",
-    "filename": "routes/chats.js",
+    "filename": "routes/chat/chats.js",
     "groupTitle": "Chats"
   },
   {
@@ -637,6 +802,13 @@
             "optional": false,
             "field": "name",
             "description": "<p>the name for the chat</p>"
+          },
+          {
+            "group": "Parameter",
+            "type": "String",
+            "optional": false,
+            "field": "email",
+            "description": "<p>of user logged in</p>"
           }
         ]
       }
@@ -648,15 +820,29 @@
             "group": "Success 201",
             "type": "boolean",
             "optional": false,
-            "field": "success",
-            "description": "<p>true when the name is inserted</p>"
+            "field": "successAlreadyExisted",
+            "description": "<p>true when mutual chatroom found</p>"
+          },
+          {
+            "group": "Success 201",
+            "type": "boolean",
+            "optional": false,
+            "field": "successNewChatRoom",
+            "description": "<p>true when newChatRoom is made.</p>"
           },
           {
             "group": "Success 201",
             "type": "Number",
             "optional": false,
-            "field": "chatId",
-            "description": "<p>the generated chatId</p>"
+            "field": "rowCount",
+            "description": "<p>the number of rows returned</p>"
+          },
+          {
+            "group": "Success 201",
+            "type": "Object[]",
+            "optional": false,
+            "field": "list",
+            "description": "<p>of mutual chat IDs</p>"
           }
         ]
       }
@@ -679,6 +865,15 @@
             "optional": false,
             "field": "message",
             "description": "<p>&quot;Missing required information&quot;</p>"
+          }
+        ],
+        "400: chatID Error": [
+          {
+            "group": "400: chatID Error",
+            "type": "String",
+            "optional": false,
+            "field": "message",
+            "description": "<p>&quot;Error assigning chatID&quot;</p>"
           }
         ],
         "400: SQL Error": [
@@ -711,12 +906,12 @@
       }
     },
     "version": "0.0.0",
-    "filename": "routes/chats.js",
+    "filename": "routes/chat/chats.js",
     "groupTitle": "Chats"
   },
   {
     "type": "put",
-    "url": "/chats/:chatId?",
+    "url": "/chats",
     "title": "Request add a user to a chat",
     "name": "PutChats",
     "group": "Chats",
@@ -743,6 +938,13 @@
             "optional": false,
             "field": "chatId",
             "description": "<p>the chat to add the user to</p>"
+          },
+          {
+            "group": "Parameter",
+            "type": "String",
+            "optional": false,
+            "field": "email",
+            "description": "<p>of the member to insert into the chat</p>"
           }
         ]
       }
@@ -804,7 +1006,7 @@
             "type": "String",
             "optional": false,
             "field": "message",
-            "description": "<p>&quot;Missing required information&quot;</p>"
+            "description": "<p>&quot;Missing chatID&quot;</p>"
           }
         ],
         "400: SQL Error": [
@@ -828,7 +1030,7 @@
       }
     },
     "version": "0.0.0",
-    "filename": "routes/chats.js",
+    "filename": "routes/chat/chats.js",
     "groupTitle": "Chats"
   },
   {
@@ -917,7 +1119,7 @@
       }
     },
     "version": "0.0.0",
-    "filename": "routes/contacts.js",
+    "filename": "routes/contacts/contacts.js",
     "groupTitle": "Contacts"
   },
   {
@@ -1034,7 +1236,7 @@
       }
     },
     "version": "0.0.0",
-    "filename": "routes/contacts.js",
+    "filename": "routes/contacts/contacts.js",
     "groupTitle": "Contacts"
   },
   {
@@ -1132,7 +1334,7 @@
       }
     },
     "version": "0.0.0",
-    "filename": "routes/contacts.js",
+    "filename": "routes/contacts/contacts.js",
     "groupTitle": "Contacts"
   },
   {
@@ -1260,7 +1462,7 @@
       }
     },
     "version": "0.0.0",
-    "filename": "routes/messages.js",
+    "filename": "routes/chat/messages.js",
     "groupTitle": "Messages"
   },
   {
@@ -1366,15 +1568,15 @@
       }
     },
     "version": "0.0.0",
-    "filename": "routes/messages.js",
+    "filename": "routes/chat/messages.js",
     "groupTitle": "Messages"
   },
   {
-    "type": "get",
-    "url": "/phish/blog/get",
-    "title": "Request a list of Phish.net Blogs",
-    "name": "GetPhishBlogGet",
-    "group": "Phish",
+    "type": "delete",
+    "url": "/requests/:email",
+    "title": "Remove user's selected contact",
+    "name": "DeleteRequests",
+    "group": "Requests",
     "header": {
       "fields": {
         "Header": [
@@ -1383,14 +1585,389 @@
             "type": "String",
             "optional": false,
             "field": "authorization",
-            "description": "<p>JWT provided from Auth get</p>"
+            "description": "<p>Valid JSON Web Token JWT</p>"
           }
         ]
       }
     },
-    "description": "<p>This end point is a pass through to the Phish.net API. All parameters will pass on to https://api.phish.net/v3/blog/get. See the <a href=\"https://phishnet.api-docs.io/v3/blog/blog-get\">Phish.net documentation</a> for a list of optional paramerters and expected results. You do not need a Phish.net api key with this endpoint. Enjoy!</p>",
+    "parameter": {
+      "fields": {
+        "Parameter": [
+          {
+            "group": "Parameter",
+            "type": "String",
+            "optional": false,
+            "field": "email",
+            "description": "<p>the contact's email.</p>"
+          }
+        ]
+      }
+    },
+    "success": {
+      "fields": {
+        "Success 200": [
+          {
+            "group": "Success 200",
+            "type": "boolean",
+            "optional": false,
+            "field": "success",
+            "description": "<p>true when the contact request is deleted</p>"
+          }
+        ]
+      }
+    },
+    "error": {
+      "fields": {
+        "400: Missing body": [
+          {
+            "group": "400: Missing body",
+            "type": "String",
+            "optional": false,
+            "field": "message",
+            "description": "<p>&quot;Missing required information&quot;</p>"
+          }
+        ],
+        "400: Self deletion": [
+          {
+            "group": "400: Self deletion",
+            "type": "String",
+            "optional": false,
+            "field": "message",
+            "description": "<p>&quot;User attempting to delete themselves&quot;</p>"
+          }
+        ],
+        "400: SQL Error": [
+          {
+            "group": "400: SQL Error",
+            "type": "String",
+            "optional": false,
+            "field": "message",
+            "description": "<p>the reported SQL error details</p>"
+          }
+        ],
+        "404: Email not found": [
+          {
+            "group": "404: Email not found",
+            "type": "String",
+            "optional": false,
+            "field": "message",
+            "description": "<p>&quot;Email not found&quot;</p>"
+          }
+        ],
+        "400: JSON Error": [
+          {
+            "group": "400: JSON Error",
+            "type": "String",
+            "optional": false,
+            "field": "message",
+            "description": "<p>&quot;malformed JSON in parameters&quot;</p>"
+          }
+        ]
+      }
+    },
     "version": "0.0.0",
-    "filename": "routes/phish.js",
-    "groupTitle": "Phish"
+    "filename": "routes/contacts/requests.js",
+    "groupTitle": "Requests"
+  },
+  {
+    "type": "get",
+    "url": "/requests/:email",
+    "title": "Retrieve the user's contact requests",
+    "name": "GetRequests",
+    "group": "Requests",
+    "header": {
+      "fields": {
+        "Header": [
+          {
+            "group": "Header",
+            "type": "String",
+            "optional": false,
+            "field": "authorization",
+            "description": "<p>Valid JSON Web Token JWT</p>"
+          }
+        ]
+      }
+    },
+    "parameter": {
+      "fields": {
+        "Parameter": [
+          {
+            "group": "Parameter",
+            "type": "String",
+            "optional": false,
+            "field": "email",
+            "description": "<p>the user's email.</p>"
+          }
+        ]
+      }
+    },
+    "success": {
+      "fields": {
+        "Success 200": [
+          {
+            "group": "Success 200",
+            "type": "Object[]",
+            "optional": false,
+            "field": "members",
+            "description": "<p>List of contact requests</p>"
+          },
+          {
+            "group": "Success 200",
+            "type": "String",
+            "optional": false,
+            "field": "members.email",
+            "description": "<p>The email of the contact</p>"
+          }
+        ]
+      }
+    },
+    "error": {
+      "fields": {
+        "400: Missing parameter": [
+          {
+            "group": "400: Missing parameter",
+            "type": "String",
+            "optional": false,
+            "field": "message",
+            "description": "<p>&quot;Missing required information&quot;</p>"
+          }
+        ],
+        "400: SQL Error": [
+          {
+            "group": "400: SQL Error",
+            "type": "String",
+            "optional": false,
+            "field": "message",
+            "description": "<p>the reported SQL error details</p>"
+          }
+        ],
+        "404: Email not found": [
+          {
+            "group": "404: Email not found",
+            "type": "String",
+            "optional": false,
+            "field": "message",
+            "description": "<p>&quot;Email not found&quot;</p>"
+          }
+        ],
+        "400: JSON Error": [
+          {
+            "group": "400: JSON Error",
+            "type": "String",
+            "optional": false,
+            "field": "message",
+            "description": "<p>&quot;malformed JSON in parameters&quot;</p>"
+          }
+        ]
+      }
+    },
+    "version": "0.0.0",
+    "filename": "routes/contacts/requests.js",
+    "groupTitle": "Requests"
+  },
+  {
+    "type": "post",
+    "url": "/requests",
+    "title": "Add another user to your contacts",
+    "name": "PostRequests",
+    "group": "Requests",
+    "header": {
+      "fields": {
+        "Header": [
+          {
+            "group": "Header",
+            "type": "String",
+            "optional": false,
+            "field": "authorization",
+            "description": "<p>Valid JSON Web Token JWT</p>"
+          }
+        ]
+      }
+    },
+    "parameter": {
+      "fields": {
+        "Parameter": [
+          {
+            "group": "Parameter",
+            "type": "String",
+            "optional": false,
+            "field": "email",
+            "description": "<p>the contact's email.</p>"
+          }
+        ]
+      }
+    },
+    "success": {
+      "fields": {
+        "Success 200": [
+          {
+            "group": "Success 200",
+            "type": "boolean",
+            "optional": false,
+            "field": "success",
+            "description": "<p>true when the contact request is sent</p>"
+          }
+        ]
+      }
+    },
+    "error": {
+      "fields": {
+        "400: Missing body": [
+          {
+            "group": "400: Missing body",
+            "type": "String",
+            "optional": false,
+            "field": "message",
+            "description": "<p>&quot;Missing required information&quot;</p>"
+          }
+        ],
+        "400: Duplicate contact request": [
+          {
+            "group": "400: Duplicate contact request",
+            "type": "String",
+            "optional": false,
+            "field": "message",
+            "description": "<p>&quot;There is already a pending request&quot;</p>"
+          }
+        ],
+        "400: Self contact request": [
+          {
+            "group": "400: Self contact request",
+            "type": "String",
+            "optional": false,
+            "field": "message",
+            "description": "<p>&quot;User attempting to add themselves&quot;</p>"
+          }
+        ],
+        "400: SQL Error": [
+          {
+            "group": "400: SQL Error",
+            "type": "String",
+            "optional": false,
+            "field": "message",
+            "description": "<p>the reported SQL error details</p>"
+          }
+        ],
+        "404: Email not found": [
+          {
+            "group": "404: Email not found",
+            "type": "String",
+            "optional": false,
+            "field": "message",
+            "description": "<p>&quot;Email not found&quot;</p>"
+          }
+        ],
+        "400: JSON Error": [
+          {
+            "group": "400: JSON Error",
+            "type": "String",
+            "optional": false,
+            "field": "message",
+            "description": "<p>&quot;malformed JSON in parameters&quot;</p>"
+          }
+        ]
+      }
+    },
+    "version": "0.0.0",
+    "filename": "routes/contacts/requests.js",
+    "groupTitle": "Requests"
+  },
+  {
+    "type": "get",
+    "url": "/search/:email",
+    "title": "Retrieve the user's contacts",
+    "name": "GetSearch",
+    "group": "Search",
+    "header": {
+      "fields": {
+        "Header": [
+          {
+            "group": "Header",
+            "type": "String",
+            "optional": false,
+            "field": "authorization",
+            "description": "<p>Valid JSON Web Token JWT</p>"
+          }
+        ]
+      }
+    },
+    "parameter": {
+      "fields": {
+        "Parameter": [
+          {
+            "group": "Parameter",
+            "type": "String",
+            "optional": false,
+            "field": "email",
+            "description": "<p>the user's email.</p>"
+          }
+        ]
+      }
+    },
+    "success": {
+      "fields": {
+        "Success 200": [
+          {
+            "group": "Success 200",
+            "type": "boolean",
+            "optional": false,
+            "field": "success",
+            "description": "<p>true when the user is found</p>"
+          }
+        ]
+      }
+    },
+    "error": {
+      "fields": {
+        "400: Missing parameter": [
+          {
+            "group": "400: Missing parameter",
+            "type": "String",
+            "optional": false,
+            "field": "message",
+            "description": "<p>&quot;Missing required information&quot;</p>"
+          }
+        ],
+        "400: Self search query": [
+          {
+            "group": "400: Self search query",
+            "type": "String",
+            "optional": false,
+            "field": "message",
+            "description": "<p>&quot;User is searching themselves&quot;</p>"
+          }
+        ],
+        "400: SQL Error": [
+          {
+            "group": "400: SQL Error",
+            "type": "String",
+            "optional": false,
+            "field": "message",
+            "description": "<p>the reported SQL error details</p>"
+          }
+        ],
+        "404: Email not found": [
+          {
+            "group": "404: Email not found",
+            "type": "String",
+            "optional": false,
+            "field": "message",
+            "description": "<p>&quot;Email not found&quot;</p>"
+          }
+        ],
+        "400: JSON Error": [
+          {
+            "group": "400: JSON Error",
+            "type": "String",
+            "optional": false,
+            "field": "message",
+            "description": "<p>&quot;malformed JSON in parameters&quot;</p>"
+          }
+        ]
+      }
+    },
+    "version": "0.0.0",
+    "filename": "routes/contacts/search.js",
+    "groupTitle": "Search"
   }
 ]

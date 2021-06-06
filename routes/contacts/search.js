@@ -7,20 +7,17 @@ const pool = require('../../utilities/exports').pool
 const router = express.Router()
 
 /**
- * @api {get} /contacts/:email Retrieve the user's contacts
- * @apiName GetContacts
- * @apiGroup Contacts
+ * @api {get} /search/:email Retrieve the user's contacts
+ * @apiName GetSearch
+ * @apiGroup Search
  * 
  * @apiHeader {String} authorization Valid JSON Web Token JWT
  * @apiParam {String} email the user's email.
  * 
- * @apiSuccess {Object[]} members List of contacts
- * @apiSuccess {String} members.firstname The first name of the contact
- * @apiSuccess {String} members.lastname The last name of the contact
- * @apiSuccess {String} members.nickname The nickname of the contact
- * @apiSuccess {String} members.email The email of the contact
+ * @apiSuccess (Success 200) {boolean} success true when the user is found
  * 
  * @apiError (400: Missing parameter) {String} message "Missing required information"
+ * @apiError (400: Self search query) {String} message "User is searching themselves"
  * @apiError (400: SQL Error) {String} message the reported SQL error details
  * @apiError (404: Email not found) {String} message "Email not found"
  * 
