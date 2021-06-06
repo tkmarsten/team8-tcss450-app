@@ -71,7 +71,7 @@ router.get('/', (request, response, next) => {
         })
     }
 }, (request, response) => {
-    const theQuery = "SELECT Password, Salt, MemberId FROM Members WHERE Email=$1"
+    const theQuery = "SELECT Password, Salt, MemberId, Verification FROM Members WHERE Email=$1"
     const values = [request.auth.email]
     pool.query(theQuery, values)
         .then(result => {
@@ -92,7 +92,7 @@ router.get('/', (request, response, next) => {
             let providedSaltedHash = generateHash(request.auth.password, salt)
 
             //Did our salted hash match their salted hash?
-            if (storedSaltedHash === providedSaltedHash) {
+            if ((storedSaltedHash === providedSaltedHash) && (result.rows[0].verification == 1)) {
                 //credentials match. get a new JWT
                 let token = jwt.sign(
                     {
@@ -112,8 +112,10 @@ router.get('/', (request, response, next) => {
                 })
             } else {
                 //credentials dod not match
+                let msg = 'Credentials did not match'
+                if (result.rows[0].verification == 0) msg = 'please validate your email.';
                 response.status(400).send({
-                    message: 'Credentials did not match'
+                    message: msg
                 })
             }
         })
