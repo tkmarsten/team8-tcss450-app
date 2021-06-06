@@ -12,6 +12,8 @@ const sendEmail = require('./email.js').sendEmail
 
 let messaging = require('./pushy_utilities.js')
 
+let contacts = require('./pushy_utilities.js').sendContactRequestToIndividual
+
 module.exports = {
-    pool, generateHash, generateSalt, validation, sendEmail, messaging
+    pool, generateHash, generateSalt, validation, sendEmail, messaging, contacts
 }

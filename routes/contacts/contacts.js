@@ -107,8 +107,8 @@ router.post('/', (request, response, next) => {
 
     pool.query(query, values)
         .then(result => {
-            msg_functions.sendContactRequestToIndividual(
-                result.rows[0].token, request.body.sender, response.locals.memberid)
+            // msg_functions.sendContactRequestToIndividual(
+            //     result.rows[0].token, request.body.sender, response.locals.memberid)
             // response
             response.status(200).send({
                 success: true,

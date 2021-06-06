@@ -4,6 +4,8 @@ const express = require('express')
 //Access the connection to Heroku Database
 const pool = require('../../utilities/exports').pool
 
+const contact_functions = require('../../utilities/exports').contacts
+
 const router = express.Router()
 
 /**
@@ -111,10 +113,16 @@ router.post('/', (request, response, next) => {
 
     pool.query(query, values)
         .then(result => {
-            next();
+            next()
+            // contact_functions(
+            //     result.rows[0].token, request.body.sender, response.locals.memberid)
+            response.status(200).send({
+                success: true,
+                message: "Request sent"
+            })
         }).catch(error => {
             response.status(400).send({
-                message: "SQL Error",
+                message: "SQL Error, for sending request",
                 error: error
             })
         })
@@ -126,34 +134,39 @@ router.post('/', (request, response, next) => {
 
     pool.query(query, values)
         .then(result => {
-            msg_functions.sendContactRequestToIndividual(
+            contact_functions(
                 result.rows[0].token, request.body.sender, response.locals.memberid)
-            // response
             response.status(200).send({
                 success: true,
                 message: "Request sent"
             })
+            
         }).catch(error => {
-            next();
-        })
-}, (request, response) => {
-    let query =  `INSERT INTO Pending (MemberID, type)
-                VALUES($1, $2)
-                RETURNING * `
-    let values = [response.locals.memberid, "Contact"]
-
-    pool.query(query, values)
-        .then(result => {
-            response.status(200).send({
-                success: true,
-                message: "Request sent, Notification logged: " + result.rows[0].primarykey
-            })
-        }).catch(error => {
-            response.status(200).send({
-                message: "Request sent, Notification not saved.",
+            response.status(400).send({
+                message: "SQL Error, for sending request",
                 error: error
             })
         })
+// }, (request, response) => {
+//     let query =  `INSERT INTO Pending (MemberID, type)
+//                 VALUES($1, $2)
+//                 RETURNING * `
+//     let values = [response.locals.memberid, "Contact"]
+
+//     pool.query(query, values)
+//         .then(result => {
+//             // msg_functions.sendContactRequestToIndividual(
+//             //     result.rows[0].token, request.body.sender, response.locals.memberid)
+//             // response.status(200).send({
+//             //     success: true,
+//             //     message: "Request sent, Notification logged: " + result.rows[0].primarykey
+//             // })
+//         }).catch(error => {
+//             response.status(400).send({
+//                 message: "SQL Error",
+//                 error: error
+//             })
+//         })
 })
 
 /**
